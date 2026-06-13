@@ -1,0 +1,505 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>KidiLearn Bénin</title>
+
+<!-- ═══ PWA META TAGS ═══ -->
+<meta name="application-name" content="KidiLearn">
+<meta name="description" content="Application éducative multilingue pour enfants du Bénin">
+<meta name="theme-color" content="#4A148C">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="KidiLearn">
+<meta name="msapplication-TileColor" content="#4A148C">
+<meta name="msapplication-TileImage" content="icons/icon-144.png">
+
+<!-- ═══ ICÔNES APPLE / ANDROID ═══ -->
+<link rel="icon" type="image/png" sizes="192x192" href="icons/icon-192.png">
+<link rel="icon" type="image/png" sizes="512x512" href="icons/icon-512.png">
+<link rel="apple-touch-icon" sizes="152x152" href="icons/icon-152.png">
+<link rel="apple-touch-icon" sizes="192x192" href="icons/icon-192.png">
+
+<!-- ═══ MANIFEST PWA ═══ -->
+<link rel="manifest" href="manifest.json">
+
+<!-- ═══ FONTS ═══ -->
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;700;800;900&display=swap" rel="stylesheet">
+
+<style>
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:'Nunito',sans-serif;background:#F0EEFF;min-height:100vh;display:flex;justify-content:center;align-items:flex-start;padding:0;}
+.app{width:100%;max-width:420px;min-height:100vh;background:#F0EEFF;position:relative;overflow-x:hidden;}
+.screen{padding:16px 16px 80px;}
+.blob{position:fixed;border-radius:50%;opacity:.12;pointer-events:none;z-index:0;}
+.b1{width:220px;height:220px;background:#CE93D8;top:-60px;right:-60px;animation:fl 8s ease-in-out infinite;}
+.b2{width:150px;height:150px;background:#90CAF9;top:260px;left:-60px;animation:fl 7s ease-in-out infinite 2s;}
+.b3{width:120px;height:120px;background:#A5D6A7;bottom:120px;right:-30px;animation:fl 9s ease-in-out infinite 4s;}
+@keyframes fl{0%,100%{transform:translateY(0);}50%{transform:translateY(-20px);}}
+.topbar{display:flex;align-items:center;justify-content:space-between;padding:18px 0 10px;position:relative;z-index:1;}
+.logo{font-size:22px;font-weight:900;color:#4A148C;letter-spacing:-0.5px;}
+.langgrp{display:flex;gap:4px;}
+.lb{padding:4px 9px;font-size:11px;font-weight:800;border-radius:12px;border:1.5px solid #CE93D8;background:transparent;color:#7E57C2;cursor:pointer;font-family:'Nunito',sans-serif;transition:all .15s;}
+.lb.on{background:#7E57C2;color:#fff;border-color:#7E57C2;}
+.avrow{display:flex;align-items:center;gap:12px;background:#fff;border-radius:22px;padding:13px 15px;margin-bottom:13px;border:1.5px solid #EDE7F6;position:relative;z-index:1;}
+.av{width:52px;height:52px;border-radius:50%;background:linear-gradient(135deg,#9C27B0,#1565C0);display:flex;align-items:center;justify-content:center;font-size:26px;flex-shrink:0;}
+.avname{font-size:16px;font-weight:900;color:#4A148C;}
+.avmeta{font-size:11px;color:#7E57C2;margin-top:2px;}
+.xpbar{height:6px;background:#EDE7F6;border-radius:3px;margin-top:5px;width:140px;}
+.xpfill{height:6px;border-radius:3px;background:#7E57C2;width:65%;}
+.xplbl{font-size:10px;color:#B39DDB;margin-top:2px;}
+.badgerow{display:flex;gap:7px;margin-bottom:13px;overflow-x:auto;padding-bottom:2px;position:relative;z-index:1;}
+.badgerow::-webkit-scrollbar{display:none;}
+.bchip{display:flex;align-items:center;gap:4px;background:#fff;border-radius:18px;padding:5px 11px;border:1.5px solid #EDE7F6;white-space:nowrap;flex-shrink:0;font-size:11px;font-weight:700;color:#5E35B1;}
+.slbl{font-size:10px;font-weight:800;color:#B0BEC5;letter-spacing:.08em;text-transform:uppercase;margin-bottom:9px;position:relative;z-index:1;}
+.dtabs{display:flex;gap:6px;margin-bottom:11px;overflow-x:auto;padding-bottom:2px;position:relative;z-index:1;}
+.dtabs::-webkit-scrollbar{display:none;}
+.dtab{padding:6px 12px;border-radius:14px;font-size:11px;font-weight:800;cursor:pointer;white-space:nowrap;flex-shrink:0;border:1.5px solid transparent;font-family:'Nunito',sans-serif;transition:all .15s;}
+.mgrid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:13px;position:relative;z-index:1;}
+.mcard{border-radius:18px;padding:14px 12px;cursor:pointer;border:2px solid;transition:transform .12s;position:relative;overflow:hidden;}
+.mcard:active{transform:scale(.96);}
+.mshine{position:absolute;top:-25px;right:-25px;width:60px;height:60px;border-radius:50%;opacity:.12;}
+.micbox{width:40px;height:40px;border-radius:13px;display:flex;align-items:center;justify-content:center;font-size:20px;margin-bottom:7px;}
+.mcname{font-size:13px;font-weight:900;line-height:1.2;}
+.mcsub{font-size:10px;font-weight:700;opacity:.7;margin-top:1px;}
+.mcprog{height:3px;border-radius:2px;background:rgba(0,0,0,.1);margin-top:6px;}
+.mcprogfill{height:3px;border-radius:2px;background:rgba(0,0,0,.22);}
+.daily{background:#fff;border-radius:16px;padding:12px 14px;display:flex;align-items:center;gap:10px;cursor:pointer;border:1.5px solid #C8E6C9;margin-bottom:10px;position:relative;z-index:1;}
+.daily-ic{width:40px;height:40px;background:#43A047;border-radius:13px;display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0;animation:bnc 2.5s ease-in-out infinite;}
+@keyframes bnc{0%,100%{transform:translateY(0);}50%{transform:translateY(-4px);}}
+.ghdr{display:flex;align-items:center;gap:9px;padding:16px 0 10px;position:relative;z-index:1;}
+.gbk{width:36px;height:36px;background:#fff;border-radius:50%;display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:17px;border:1.5px solid #EDE7F6;font-family:'Nunito',sans-serif;flex-shrink:0;}
+.progrow{display:flex;gap:4px;margin-bottom:14px;position:relative;z-index:1;}
+.pdot{flex:1;height:7px;border-radius:4px;transition:background .3s;}
+.qcard{background:#fff;border-radius:22px;padding:20px 16px;margin-bottom:13px;text-align:center;border:2px solid;position:relative;z-index:1;}
+.qimg{width:94px;height:94px;border-radius:18px;margin:0 auto 13px;display:flex;align-items:center;justify-content:center;font-size:56px;position:relative;}
+.sndbtn{position:absolute;top:-6px;right:-6px;width:28px;height:28px;border-radius:50%;background:#7E57C2;border:none;cursor:pointer;font-size:13px;display:flex;align-items:center;justify-content:center;}
+.qtxt{font-size:16px;font-weight:900;color:#212121;margin-bottom:3px;}
+.qsub{font-size:11px;color:#BDBDBD;font-weight:700;}
+.agrid{display:grid;grid-template-columns:1fr 1fr;gap:9px;position:relative;z-index:1;}
+.abtn{border-radius:16px;padding:12px 8px;text-align:center;cursor:pointer;border:2px solid #E0E0E0;background:#fff;transition:all .15s;position:relative;}
+.abtn:active{transform:scale(.95);}
+.abtn.correct{background:#E8F5E9;border-color:#43A047;}
+.abtn.wrong{background:#FFEBEE;border-color:#E53935;animation:shk .38s;}
+@keyframes shk{0%,100%{transform:translateX(0);}25%,75%{transform:translateX(-5px);}50%{transform:translateX(5px);}}
+.aemoji{font-size:30px;display:block;margin-bottom:5px;}
+.albl{font-size:13px;font-weight:900;color:#212121;}
+.asubs{display:flex;flex-direction:column;gap:1px;margin-top:3px;}
+.asub{font-size:9px;font-weight:700;color:#BDBDBD;}
+.achk{position:absolute;top:5px;right:7px;font-size:13px;opacity:0;transition:opacity .2s;}
+.achk.show{opacity:1;}
+.fbov{position:fixed;top:0;left:0;right:0;bottom:0;pointer-events:none;display:flex;align-items:flex-start;justify-content:center;padding-top:22px;z-index:999;}
+.fbpill{padding:10px 26px;border-radius:22px;font-size:16px;font-weight:900;color:#fff;font-family:'Nunito',sans-serif;animation:slin .22s ease;}
+@keyframes slin{0%{transform:translateY(-18px);opacity:0;}100%{transform:translateY(0);opacity:1;}}
+.cfwrap{position:fixed;top:0;left:0;right:0;height:100%;pointer-events:none;z-index:998;overflow:hidden;}
+.cfp{position:absolute;width:9px;height:9px;animation:cff 1.8s ease-in forwards;}
+@keyframes cff{0%{opacity:1;transform:translateY(-10px) rotate(0);}100%{opacity:0;transform:translateY(700px) rotate(720deg);}}
+.rwrap{display:flex;flex-direction:column;align-items:center;padding:14px 0 24px;text-align:center;position:relative;z-index:1;}
+.rbadge{width:100px;height:100px;border-radius:50%;background:#FFF9C4;display:flex;align-items:center;justify-content:center;font-size:56px;border:4px solid #F9A825;margin-bottom:16px;animation:bpop .5s cubic-bezier(.36,.07,.19,.97);}
+@keyframes bpop{0%{transform:scale(0);}70%{transform:scale(1.2);}100%{transform:scale(1);}}
+.rtitle{font-size:24px;font-weight:900;color:#4A148C;margin-bottom:5px;}
+.rsub{font-size:13px;color:#7E57C2;margin-bottom:18px;line-height:1.6;font-weight:700;}
+.starsbig{display:flex;gap:9px;margin-bottom:18px;}
+.sbig{width:34px;height:34px;border-radius:50%;}
+.statsrow{display:flex;gap:9px;margin-bottom:18px;width:100%;justify-content:center;}
+.sbox{border-radius:14px;padding:11px 14px;text-align:center;flex:1;}
+.nxtbtn{background:#7E57C2;color:#fff;border:none;border-radius:17px;padding:14px 36px;font-size:15px;font-weight:900;cursor:pointer;margin-bottom:9px;font-family:'Nunito',sans-serif;width:100%;}
+.replybtn{background:transparent;color:#7E57C2;border:2px solid #CE93D8;border-radius:17px;padding:10px 26px;font-size:13px;font-weight:800;cursor:pointer;font-family:'Nunito',sans-serif;width:100%;}
+.sylarea{background:#fff;border-radius:20px;padding:15px;border:2px solid #CE93D8;margin-bottom:12px;position:relative;z-index:1;}
+.consrow{display:flex;flex-wrap:wrap;gap:6px;justify-content:center;margin-bottom:11px;}
+.cbtn{width:38px;height:42px;border-radius:11px;background:#EDE7F6;border:2px solid #CE93D8;font-size:18px;font-weight:900;color:#4A148C;cursor:pointer;font-family:'Nunito',sans-serif;transition:all .12s;display:flex;align-items:center;justify-content:center;}
+.cbtn.on{background:#7E57C2;color:#fff;border-color:#7E57C2;}
+.vowrow{display:flex;gap:7px;justify-content:center;margin-bottom:13px;}
+.vbtn{width:44px;height:48px;border-radius:13px;background:#FCE4EC;border:2px solid #F48FB1;font-size:22px;font-weight:900;color:#AD1457;cursor:pointer;font-family:'Nunito',sans-serif;transition:all .12s;display:flex;align-items:center;justify-content:center;}
+.vbtn.on{background:#E91E63;color:#fff;border-color:#E91E63;}
+.sylrow{display:flex;justify-content:center;gap:9px;margin-bottom:13px;align-items:center;}
+.lbox{width:52px;height:60px;border-radius:13px;display:flex;align-items:center;justify-content:center;font-size:30px;font-weight:900;border:2px solid;}
+.lbox.cons{background:#EDE7F6;border-color:#CE93D8;color:#4A148C;}
+.lbox.vow{background:#FCE4EC;border-color:#F48FB1;color:#AD1457;}
+.lbox.res{background:#7E57C2;border-color:#7E57C2;color:#fff;cursor:pointer;}
+.lbox.res2{background:#4A148C;border-color:#4A148C;color:#fff;cursor:pointer;}
+.opsign{font-size:22px;font-weight:900;color:#CE93D8;display:flex;align-items:center;}
+.sndbtnrow{display:flex;justify-content:center;gap:8px;margin-top:8px;}
+.schip{padding:5px 13px;border-radius:11px;font-size:12px;font-weight:800;cursor:pointer;border:none;font-family:'Nunito',sans-serif;}
+.wordmeaning{text-align:center;margin-top:10px;font-size:12px;color:#9E9E9E;font-weight:700;}
+.wordmeaning span{color:#4A148C;font-weight:900;font-size:15px;}
+.rsteps{display:flex;flex-direction:column;gap:8px;position:relative;z-index:1;}
+.rstep{display:flex;align-items:center;gap:10px;background:#fff;border-radius:14px;padding:10px 12px;border:2px solid #E0E0E0;cursor:pointer;transition:all .15s;}
+.rstep.done{border-color:#43A047;background:#E8F5E9;}
+.rstep.active{border-color:#F9A825;background:#FFFDE7;animation:stpa .8s ease-in-out infinite alternate;}
+@keyframes stpa{0%{border-color:#F9A825;}100%{border-color:#FF9800;}}
+.rstepnum{width:28px;height:28px;border-radius:50%;background:#EDE7F6;color:#6A1B9A;font-size:12px;font-weight:900;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+.rstep.done .rstepnum{background:#43A047;color:#fff;}
+.rstep.active .rstepnum{background:#F9A825;color:#fff;}
+.rstepic{font-size:24px;flex-shrink:0;}
+.rsteptxt{flex:1;}
+.rstepname{font-size:13px;font-weight:900;color:#212121;}
+.rstepsub{font-size:10px;color:#9E9E9E;font-weight:700;margin-top:1px;}
+.rstepchk{font-size:16px;opacity:0;transition:opacity .2s;}
+.rstep.done .rstepchk{opacity:1;}
+.rnxtbtn{width:100%;background:#7E57C2;color:#fff;border:none;border-radius:14px;padding:13px;font-size:14px;font-weight:900;cursor:pointer;margin-top:10px;font-family:'Nunito',sans-serif;}
+.countscene{background:#fff;border-radius:20px;padding:16px;border:2px solid #CE93D8;margin-bottom:12px;position:relative;z-index:1;}
+.objrow{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;margin:12px 0;}
+.obj{width:44px;height:44px;border-radius:12px;background:#EDE7F6;display:flex;align-items:center;justify-content:center;font-size:24px;border:2px solid #CE93D8;cursor:default;}
+.obj.lit{background:#7E57C2;border-color:#7E57C2;animation:objpop .3s ease;}
+@keyframes objpop{0%{transform:scale(.6);}100%{transform:scale(1);}}
+.numchoices{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-top:12px;}
+.nchoice{height:52px;border-radius:14px;border:2px solid #E0E0E0;background:#fff;font-size:26px;font-weight:900;color:#212121;cursor:pointer;font-family:'Nunito',sans-serif;transition:all .15s;display:flex;align-items:center;justify-content:center;}
+.nchoice.correct{background:#E8F5E9;border-color:#43A047;}
+.nchoice.wrong{background:#FFEBEE;border-color:#E53935;}
+.mancard{display:flex;gap:10px;background:#fff;border-radius:15px;padding:12px;border:1.5px solid #A5D6A7;margin-bottom:9px;position:relative;z-index:1;}
+.manic{width:44px;height:44px;background:#E8F5E9;border-radius:13px;display:flex;align-items:center;justify-content:center;font-size:22px;flex-shrink:0;}
+.alphscene{background:#fff;border-radius:20px;padding:16px;border:2px solid #FCE4EC;margin-bottom:12px;position:relative;z-index:1;}
+.alphgrid{display:grid;grid-template-columns:repeat(5,1fr);gap:7px;margin-bottom:14px;}
+.alphbtn{height:48px;border-radius:12px;border:2px solid #F48FB1;background:#FCE4EC;font-size:22px;font-weight:900;color:#AD1457;cursor:pointer;font-family:'Nunito',sans-serif;transition:all .12s;display:flex;align-items:center;justify-content:center;}
+.alphbtn.on{background:#E91E63;color:#fff;border-color:#E91E63;}
+.alphword{background:#FCE4EC;border-radius:14px;padding:12px;text-align:center;margin-top:8px;}
+.alphword-letter{font-size:48px;font-weight:900;color:#AD1457;}
+.alphword-example{font-size:14px;font-weight:700;color:#880E4F;margin-top:4px;}
+.alphword-img{font-size:40px;margin:6px 0;}
+.alphword-langs{display:flex;justify-content:center;gap:6px;flex-wrap:wrap;margin-top:6px;}
+.alphword-pill{font-size:11px;padding:3px 9px;border-radius:8px;font-weight:700;}
+.pchild{display:flex;align-items:center;gap:12px;background:#EDE7F6;border-radius:18px;padding:12px 14px;margin-bottom:13px;position:relative;z-index:1;}
+.pstatgrid{display:grid;grid-template-columns:1fr 1fr;gap:9px;margin-bottom:13px;position:relative;z-index:1;}
+.pstatcard{background:#fff;border-radius:14px;padding:12px;border:1.5px solid #EDE7F6;}
+.domprog{display:flex;flex-direction:column;gap:9px;margin-bottom:13px;position:relative;z-index:1;}
+.dprow{display:flex;align-items:center;gap:8px;}
+.dplbl{font-size:11px;color:#757575;width:80px;flex-shrink:0;font-weight:700;}
+.dpbarbg{flex:1;height:7px;background:#EDE7F6;border-radius:4px;overflow:hidden;}
+.dpbar{height:7px;border-radius:4px;}
+.dppct{font-size:10px;color:#9E9E9E;width:30px;text-align:right;flex-shrink:0;font-weight:700;}
+.langbox{background:#EDE7F6;border-radius:16px;padding:13px 14px;position:relative;z-index:1;}
+.langpills{display:flex;gap:7px;flex-wrap:wrap;margin-top:8px;}
+.langpill{font-size:12px;padding:6px 13px;border-radius:12px;font-weight:800;cursor:pointer;border:2px solid transparent;font-family:'Nunito',sans-serif;}
+.navbar{position:fixed;bottom:0;left:50%;transform:translateX(-50%);width:100%;max-width:420px;background:#fff;border-top:1.5px solid #EDE7F6;display:flex;z-index:100;padding:8px 0 env(safe-area-inset-bottom, 12px);}
+.navbtn{flex:1;display:flex;flex-direction:column;align-items:center;gap:3px;cursor:pointer;padding:4px 0;border:none;background:transparent;font-family:'Nunito',sans-serif;}
+.navbtn span{font-size:20px;}
+.navbtn p{font-size:9px;font-weight:800;color:#9E9E9E;}
+.navbtn.on p{color:#7E57C2;}
+/* Bannière installation PWA */
+#pwa-banner{display:none;position:fixed;bottom:70px;left:50%;transform:translateX(-50%);width:calc(100% - 32px);max-width:390px;background:#4A148C;color:#fff;border-radius:16px;padding:12px 14px;z-index:200;box-shadow:0 4px 20px rgba(0,0,0,.3);align-items:center;gap:10px;}
+#pwa-banner.show{display:flex;}
+#pwa-banner img{width:36px;height:36px;border-radius:8px;flex-shrink:0;}
+#pwa-banner .pwa-txt{flex:1;font-size:12px;font-weight:700;line-height:1.4;}
+#pwa-banner .pwa-txt strong{display:block;font-size:13px;font-weight:900;}
+#pwa-install-btn{background:#F9A825;color:#3E2A00;border:none;border-radius:10px;padding:8px 12px;font-size:11px;font-weight:900;cursor:pointer;white-space:nowrap;font-family:'Nunito',sans-serif;}
+#pwa-close-btn{background:transparent;border:none;color:#CE93D8;font-size:18px;cursor:pointer;padding:0 4px;line-height:1;}
+</style>
+</head>
+<body>
+<div class="blob b1"></div><div class="blob b2"></div><div class="blob b3"></div>
+
+<!-- Bannière d'installation PWA -->
+<div id="pwa-banner">
+  <img src="icons/icon-72.png" alt="KidiLearn">
+  <div class="pwa-txt">
+    <strong>Installer KidiLearn</strong>
+    Ajouter sur l'écran d'accueil pour jouer hors-ligne !
+  </div>
+  <button id="pwa-install-btn">Installer</button>
+  <button id="pwa-close-btn">✕</button>
+</div>
+
+<div class="app">
+  <div class="screen" id="screen"></div>
+  <nav class="navbar" id="navbar"></nav>
+</div>
+
+<script>
+// ═══════════════════════════════════════════
+// ENREGISTREMENT SERVICE WORKER (PWA)
+// ═══════════════════════════════════════════
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', () => {
+    navigator.serviceWorker.register('./sw.js')
+      .then(reg => console.log('[PWA] Service Worker enregistré :', reg.scope))
+      .catch(err => console.warn('[PWA] Erreur SW :', err));
+  });
+}
+
+// ═══════════════════════════════════════════
+// GESTION INSTALLATION PWA
+// ═══════════════════════════════════════════
+let deferredPrompt = null;
+const banner = document.getElementById('pwa-banner');
+const installBtn = document.getElementById('pwa-install-btn');
+const closeBtn = document.getElementById('pwa-close-btn');
+
+window.addEventListener('beforeinstallprompt', e => {
+  e.preventDefault();
+  deferredPrompt = e;
+  // Afficher la bannière après 3 secondes
+  setTimeout(() => banner.classList.add('show'), 3000);
+});
+
+installBtn.addEventListener('click', async () => {
+  if (!deferredPrompt) return;
+  deferredPrompt.prompt();
+  const { outcome } = await deferredPrompt.userChoice;
+  console.log('[PWA] Installation :', outcome);
+  deferredPrompt = null;
+  banner.classList.remove('show');
+});
+
+closeBtn.addEventListener('click', () => {
+  banner.classList.remove('show');
+});
+
+window.addEventListener('appinstalled', () => {
+  console.log('[PWA] Application installée avec succès !');
+  banner.classList.remove('show');
+});
+
+// ═══════════════════════════════════════════
+// APPLICATION KIDILEARN (logique complète)
+// ═══════════════════════════════════════════
+const LANGS=["fr","en","yo","ad"];
+const LN={fr:"FR",en:"EN",yo:"Yor",ad:"Adj"};
+const MODULES=[
+  {id:"routine_matin",domain:"d1",icon:"🌅",name:{fr:"Matin de Kofi",en:"Kofi's morning",yo:"Owurọ Kofi",ad:"Kofi zǎn"},sub:{fr:"Routine & bonnes manières",en:"Routine & manners",yo:"Àṣà owurọ",ad:"Vivo gbegbe"},bg:"#FFF9C4",bd:"#FFE082",card:"#F9A825",text:"#3E2A00",subc:"#E65100",prog:.6},
+  {id:"routine_soir",domain:"d1",icon:"🌙",name:{fr:"Soir de Kofi",en:"Kofi's evening",yo:"Irọlẹ Kofi",ad:"Kofi zã"},sub:{fr:"Routine du soir",en:"Evening routine",yo:"Àṣà irọlẹ",ad:"Zã vivo"},bg:"#E8EAF6",bd:"#9FA8DA",card:"#3949AB",text:"#0D0033",subc:"#283593",prog:.3},
+  {id:"manners",domain:"d1",icon:"👐",name:{fr:"Bonnes manières",en:"Good manners",yo:"Àṣà rere",ad:"Nuvivɔ nyui"},sub:{fr:"Saluer · Remercier · Respecter",en:"Greet · Thank · Respect",yo:"Kí · Dúpẹ́ · Bọwọ̀",ad:"Kplɔ · Awɔ · Susu"},bg:"#E8F5E9",bd:"#A5D6A7",card:"#2E7D32",text:"#003300",subc:"#388E3C",prog:.2},
+  {id:"body",domain:"d2",icon:"👦",name:{fr:"Mon corps",en:"My body",yo:"Ara mi",ad:"Agbazame"},sub:{fr:"Illustré & interactif",en:"Illustrated & interactive",yo:"Ara ènìyàn",ad:"Agbaza vivo"},bg:"#E3F2FD",bd:"#90CAF9",card:"#1565C0",text:"#001A33",subc:"#1976D2",prog:.55},
+  {id:"hygiene",domain:"d1",icon:"🦷",name:{fr:"Hygiène",en:"Hygiene",yo:"Ìmọ́tótó",ad:"Mimɔ"},sub:{fr:"Corps · Habits · Aliments",en:"Body · Clothes · Food",yo:"Ara · Aṣọ · Oúnjẹ",ad:"Agbaza · Avo · Nu"},bg:"#E0F7FA",bd:"#80CBC4",card:"#00695C",text:"#003330",subc:"#00796B",prog:.5},
+  {id:"alphabet",domain:"d3",icon:"🔤",name:{fr:"L'alphabet",en:"Alphabet",yo:"Lẹ́tà",ad:"Alfabɛ"},sub:{fr:"Sons avant lettres",en:"Sounds before letters",yo:"Ohùn kí ó tó lẹ́tà",ad:"Vɔ akɔ alfabɛ"},bg:"#FCE4EC",bd:"#F48FB1",card:"#AD1457",text:"#3C0016",subc:"#C2185B",prog:.35},
+  {id:"syllabes",domain:"d3",icon:"📖",name:{fr:"Syllabes",en:"Syllables",yo:"Àwọn ìdápọ̀",ad:"Syllabe"},sub:{fr:"T+A=TA → TATA",en:"T+A=TA → TATA",yo:"T+A=TA → TATA",ad:"T+A=TA → TATA"},bg:"#EDE7F6",bd:"#CE93D8",card:"#6A1B9A",text:"#1A0035",subc:"#512DA8",prog:.4},
+  {id:"numbers",domain:"d3",icon:"🔢",name:{fr:"Compter",en:"Counting",yo:"Ìkà",ad:"Yeyɔ"},sub:{fr:"Objets concrets → Symbole",en:"Objects → Symbol",yo:"Ohun → Nọ́mbà",ad:"Ðo → Nɔmba"},bg:"#F3E5F5",bd:"#CE93D8",card:"#6A1B9A",text:"#1A0035",subc:"#7B1FA2",prog:.45},
+  {id:"colors",domain:"d3",icon:"🎨",name:{fr:"Couleurs",en:"Colors",yo:"Àwọ̀",ad:"Kɔlɔ"},sub:{fr:"Rouge · Bleu · Vert...",en:"Red · Blue · Green...",yo:"Pupa · Búlúù · Ewé",ad:"Vu · Blu · Ɖeɖe"},bg:"#FFFDE7",bd:"#FFE082",card:"#F57F17",text:"#3E2A00",subc:"#E65100",prog:.35},
+  {id:"animals",domain:"d3",icon:"🐾",name:{fr:"Animaux",en:"Animals",yo:"Ẹran",ad:"Nukɔnkɔn"},sub:{fr:"Noms · Sons · Habitats",en:"Names · Sounds · Homes",yo:"Orukọ · Ohùn",ad:"Nyikeke"},bg:"#FFF3E0",bd:"#FFCC80",card:"#E65100",text:"#3E1000",subc:"#BF360C",prog:.7},
+  {id:"emotions",domain:"d4",icon:"😊",name:{fr:"Émotions",en:"Emotions",yo:"Ìmọ̀lára",ad:"Nusɔsɔ"},sub:{fr:"Content · Triste · Colère...",en:"Happy · Sad · Angry...",yo:"Inú dídùn · Ọgbẹ́n",ad:"Nyɔ · Doxo"},bg:"#FFEBEE",bd:"#FFCDD2",card:"#C62828",text:"#3C0000",subc:"#D32F2F",prog:.25},
+  {id:"social",domain:"d5",icon:"👨‍👩‍👧",name:{fr:"Ma famille",en:"My family",yo:"Ìdílé mi",ad:"Subɔsubɔme"},sub:{fr:"Famille · École · Quartier",en:"Family · School · Area",yo:"Ìdílé · Ilé ẹ̀kọ́",ad:"Xɔme · Lekɔle"},bg:"#FBE9E7",bd:"#FFAB91",card:"#BF360C",text:"#3E0F00",subc:"#D84315",prog:.4},
+];
+const DOMAINS=[
+  {id:"all",label:{fr:"Tout",en:"All",yo:"Gbogbo",ad:"Bǐ"},color:"#7E57C2",bg:"#EDE7F6",bd:"#CE93D8"},
+  {id:"d1",label:{fr:"Santé & Vie",en:"Health & Life",yo:"Ìlera",ad:"Nyɔnɔ"},color:"#2E7D32",bg:"#E8F5E9",bd:"#A5D6A7"},
+  {id:"d2",label:{fr:"Corps",en:"Body",yo:"Ara",ad:"Agbaza"},color:"#1565C0",bg:"#E3F2FD",bd:"#90CAF9"},
+  {id:"d3",label:{fr:"Pré-apprentissage",en:"Pre-learning",yo:"Ẹ̀kọ́",ad:"Nukpɔ"},color:"#6A1B9A",bg:"#EDE7F6",bd:"#CE93D8"},
+  {id:"d4",label:{fr:"Émotions",en:"Emotions",yo:"Ìmọ̀lára",ad:"Nusɔsɔ"},color:"#C62828",bg:"#FFEBEE",bd:"#FFCDD2"},
+  {id:"d5",label:{fr:"Société",en:"Society",yo:"Àwùjọ",ad:"Doménɔ"},color:"#BF360C",bg:"#FBE9E7",bd:"#FFAB91"},
+];
+const ROUTINE_MATIN=[
+  {icon:"😴",name:{fr:"Je me réveille",en:"I wake up",yo:"Mo jí",ad:"Un fɔ ɖa"},sub:{fr:"Bonjour le soleil !",en:"Good morning sun!",yo:"Ẹ káàárọ̀!",ad:"Egbe gbɔ!"}},
+  {icon:"🚽",name:{fr:"Je vais aux toilettes",en:"I go to the toilet",yo:"Mo lọ sí ìgbọ̀nsẹ̀",ad:"Un yi kɔ"},sub:{fr:"Avant toute chose",en:"Before anything else",yo:"Kí ó tó ohunkóhun",ad:"Akɔ nu blibo"}},
+  {icon:"🦷",name:{fr:"Je me brosse les dents",en:"I brush my teeth",yo:"Mo fọ ẹnu mi",ad:"Un fufǔ ɖetíme"},sub:{fr:"Haut, bas, intérieur !",en:"Top, bottom, inside!",yo:"Oke, isalẹ, inú!",ad:"Ŋu, sín, gome!"}},
+  {icon:"🚿",name:{fr:"Je me lave",en:"I wash myself",yo:"Mo wẹ ara mi",ad:"Un huhun agbazame"},sub:{fr:"De la tête aux pieds",en:"Head to toe",yo:"Láti orí sí ẹsẹ̀",ad:"Ta ɖo klɔ yi afɔ"}},
+  {icon:"👕",name:{fr:"Je m'habille",en:"I get dressed",yo:"Mo wọ aṣọ mi",ad:"Un avo me"},sub:{fr:"Habits propres et secs",en:"Clean and dry clothes",yo:"Aṣọ tí ó mọ́",ad:"Avo mimɔ"}},
+  {icon:"🙏",name:{fr:"Je salue Papa et Maman",en:"I greet Dad and Mom",yo:"Mo kí Bàbá àti Ìyá",ad:"Un kplɔ Papa kpo Mama"},sub:{fr:"Bonjour Papa ! Bonjour Maman !",en:"Good morning Dad! Mom!",yo:"Ẹ káàárọ̀ Bàbá! Ìyá!",ad:"Egbe gbɔ Papa! Mama!"}},
+  {icon:"🍽️",name:{fr:"Je prends le petit déjeuner",en:"I eat breakfast",yo:"Mo jẹ oúnjẹ àárọ̀",ad:"Un ɖu atĩ nu"},sub:{fr:"Assis, calmement, à deux mains",en:"Sitting, calmly, both hands",yo:"Mo jókòó, mo jẹun",ad:"Un zɔ nu ɖu alɔ eve ji"}},
+  {icon:"🎒",name:{fr:"Je prends mon sac",en:"I take my bag",yo:"Mo gbé àpò mi",ad:"Un sɔ akalitame"},sub:{fr:"Prêt pour l'école !",en:"Ready for school!",yo:"Ó ṣetán fún ilé ẹ̀kọ́!",ad:"Lekɔle ta!"}},
+];
+const ROUTINE_SOIR=[
+  {icon:"🏃",name:{fr:"Je rentre à la maison",en:"I come home",yo:"Mo padà sí ilé",ad:"Un lɛ xɔ"},sub:{fr:"Je salue toute la famille",en:"I greet the family",yo:"Mo kí ìdílé",ad:"Un kplɔ subɔsubɔ"}},
+  {icon:"👕",name:{fr:"Je change de vêtements",en:"I change clothes",yo:"Mo yí aṣọ",ad:"Un avo yiyi"},sub:{fr:"Je mets mes habits de maison",en:"I put on home clothes",yo:"Mo wọ aṣọ ilé",ad:"Un avo xɔtɔn me"}},
+  {icon:"🍽️",name:{fr:"Je mange le dîner",en:"I eat dinner",yo:"Mo jẹ oúnjẹ alẹ",ad:"Un ɖu zã nu"},sub:{fr:"En famille, je remercie",en:"With family, I say thanks",yo:"Pẹ̀lú ìdílé, mo dúpẹ́",ad:"Subɔsubɔ jí, un awɔ nu"}},
+  {icon:"📚",name:{fr:"Je fais mes devoirs",en:"I do my homework",yo:"Mo ṣe iṣẹ́ ilé",ad:"Un wɔ lekɔle wɔwɔ"},sub:{fr:"Concentration et calme",en:"Focus and calm",yo:"Fọkànsí àti ìdákẹ́jẹ́ẹ́",ad:"Ðenu xlɔ bo na"}},
+  {icon:"🦷",name:{fr:"Je me brosse les dents",en:"I brush my teeth",yo:"Mo fọ ẹnu mi",ad:"Un fufǔ ɖetíme"},sub:{fr:"Avant de dormir !",en:"Before sleeping!",yo:"Kí ó tó sùn!",ad:"Akɔ ɖo!"}},
+  {icon:"🙏",name:{fr:"Je dis bonsoir",en:"I say goodnight",yo:"Mo sọ ó dàrọ̀",ad:"Un ɖo zã nyuie"},sub:{fr:"Bonsoir Papa ! Bonsoir Maman !",en:"Goodnight Dad! Mom!",yo:"Ó dàrọ̀ Bàbá! Ìyá!",ad:"Zã nyuie Papa! Mama!"}},
+  {icon:"😴",name:{fr:"Je dors",en:"I sleep",yo:"Mo sùn",ad:"Un ɖo"},sub:{fr:"Bonne nuit !",en:"Good night!",yo:"Ó dàrọ̀!",ad:"Zã nyuie!"}},
+];
+const MANNERS=[
+  {icon:"🌅",title:{fr:"Le matin",en:"In the morning",yo:"Ní owurọ",ad:"Zǎn"},text:{fr:"Tu dis « Bonjour Papa ! Bonjour Maman ! » avant de faire quoi que ce soit.",en:"Say 'Good morning Dad! Mom!' before doing anything.",yo:"O sọ 'Ẹ káàárọ̀ Bàbá!' kí o tó ṣe ohunkóhun.",ad:"A ɖo 'Egbe gbɔ Papa!' akɔ nu blibo."}},
+  {icon:"👐",title:{fr:"Quand on te donne quelque chose",en:"When given something",yo:"Nígbà tí a bá fún ọ",ad:"Tɔn mɛ fɔ we"},text:{fr:"Tu prends à deux mains et tu dis « Merci ! »",en:"Take with both hands and say 'Thank you!'",yo:"O gbà pẹ̀lú ọwọ́ méjì, o sọ 'Ẹ ṣé!'",ad:"A sɔ alɔ eve ji bo ɖo 'Awɔ nu!'"}},
+  {icon:"👴",title:{fr:"Devant un aîné",en:"Before an elder",yo:"Níwájú àgbàdo",ad:"Dɔ asú ta"},text:{fr:"Tu baisses la tête, tu dis bonjour et tu attends qu'il te parle.",en:"Bow your head, greet and wait to be spoken to.",yo:"O tẹ orí rẹ, o kí, o dúró.",ad:"A gbá ta yi, a kplɔ, a ɖo gbɔ."}},
+  {icon:"🏠",title:{fr:"En entrant dans une maison",en:"When entering a house",yo:"Nígbà tí o bá wọlé",ad:"Tɔn xɔ dyi"},text:{fr:"Tu frappes à la porte, tu attends et tu dis ton nom.",en:"Knock, wait and say your name.",yo:"O kọ ilẹ̀kùn, o dúró, o sọ orúkọ rẹ.",ad:"A kpui kpui dyi, a ɖo gbɔ, a ɖo nyime."}},
+  {icon:"🍽️",title:{fr:"À table",en:"At the table",yo:"Lẹ́bẹ̀ tábìlì",ad:"Tafɔ dɔ"},text:{fr:"Tu attends que tout le monde soit servi, tu ne parles pas la bouche pleine.",en:"Wait for everyone to be served, don't talk with a full mouth.",yo:"O dúró kí a tó sìn gbogbo ènìyàn.",ad:"A ɖo gbɔ mɛ bǐ na ɖu akɔ."}},
+  {icon:"😷",title:{fr:"Quand tu éternues",en:"When sneezing",yo:"Nígbà tí o bá jó",ad:"Tɔn a jɔ"},text:{fr:"Tu mets la main devant la bouche et tu t'excuses.",en:"Cover your mouth and say 'excuse me'.",yo:"O fi ọwọ́ bò ẹnu rẹ.",ad:"A xɔ alɔ ɖa nu ɖe bo ɖo 'Kakpa'"}},
+];
+const ALPHABET=[
+  {letter:"A",emoji:"🐊",word:{fr:"Alligator",en:"Alligator",yo:"Onídán",ad:"Kpawu"}},
+  {letter:"B",emoji:"🍌",word:{fr:"Banane",en:"Banana",yo:"Ọ̀gẹ̀dẹ̀",ad:"Avitĩ"}},
+  {letter:"C",emoji:"🐊",word:{fr:"Crocodile",en:"Crocodile",yo:"Onídán",ad:"Kpawu"}},
+  {letter:"D",emoji:"🦷",word:{fr:"Dent",en:"Tooth",yo:"Eyín",ad:"Ɖeti"}},
+  {letter:"E",emoji:"🌊",word:{fr:"Eau",en:"Water",yo:"Omi",ad:"Towe"}},
+  {letter:"F",emoji:"🔥",word:{fr:"Feu",en:"Fire",yo:"Iná",ad:"Dɛ"}},
+  {letter:"G",emoji:"🐸",word:{fr:"Grenouille",en:"Frog",yo:"Opolo",ad:"Agble"}},
+  {letter:"H",emoji:"🌿",word:{fr:"Herbe",en:"Grass",yo:"Koríko",ad:"Xɔ"}},
+  {letter:"I",emoji:"🌴",word:{fr:"Igname",en:"Yam",yo:"Ìṣu",ad:"Te"}},
+  {letter:"J",emoji:"🌺",word:{fr:"Jardin",en:"Garden",yo:"Ọgbà",ad:"Agble"}},
+  {letter:"K",emoji:"🐓",word:{fr:"Kpakpa",en:"Chicken",yo:"Adìẹ",ad:"Kɔkɔ"}},
+  {letter:"L",emoji:"🦁",word:{fr:"Lion",en:"Lion",yo:"Kìnnìún",ad:"Nɔte"}},
+  {letter:"M",emoji:"🍑",word:{fr:"Mangue",en:"Mango",yo:"Ìṣu",ad:"Mango"}},
+  {letter:"N",emoji:"🐟",word:{fr:"Nager",en:"Fish",yo:"Ẹja",ad:"Tɔ"}},
+  {letter:"O",emoji:"🥚",word:{fr:"Œuf",en:"Egg",yo:"Ẹyin",ad:"Agon"}},
+  {letter:"P",emoji:"🍍",word:{fr:"Papaye",en:"Papaya",yo:"Ìbẹ̀pẹ̀",ad:"Kpakpa"}},
+  {letter:"R",emoji:"🌧️",word:{fr:"Rivière",en:"River",yo:"Odò",ad:"To"}},
+  {letter:"S",emoji:"☀️",word:{fr:"Soleil",en:"Sun",yo:"Òrùn",ad:"Agbaza"}},
+  {letter:"T",emoji:"🌳",word:{fr:"Tamarinier",en:"Tree",yo:"Igi",ad:"Atĩ"}},
+  {letter:"V",emoji:"🐄",word:{fr:"Vache",en:"Cow",yo:"Màlúù",ad:"Na"}},
+];
+const COUNT_LEVELS=[
+  {count:1,obj:"🍎",answer:1,choices:[1,2,3,4],word:{fr:"Un",en:"One",yo:"Ọ̀kan",ad:"Ɖokui"}},
+  {count:2,obj:"🍌",answer:2,choices:[1,2,3,5],word:{fr:"Deux",en:"Two",yo:"Èjì",ad:"Eve"}},
+  {count:3,obj:"🍑",answer:3,choices:[2,3,4,5],word:{fr:"Trois",en:"Three",yo:"Ẹ̀ta",ad:"Etɔ̃"}},
+  {count:4,obj:"🍊",answer:4,choices:[2,3,4,6],word:{fr:"Quatre",en:"Four",yo:"Ẹ̀rin",ad:"Enɛ"}},
+  {count:5,obj:"🍇",answer:5,choices:[3,5,6,7],word:{fr:"Cinq",en:"Five",yo:"Àrún",ad:"Atɔ̃"}},
+  {count:6,obj:"🍋",answer:6,choices:[4,5,6,8],word:{fr:"Six",en:"Six",yo:"Ẹ̀fà",ad:"Aɖe"}},
+  {count:7,obj:"⭐",answer:7,choices:[5,7,8,9],word:{fr:"Sept",en:"Seven",yo:"Èje",ad:"Adre"}},
+  {count:8,obj:"🌺",answer:8,choices:[6,7,8,10],word:{fr:"Huit",en:"Eight",yo:"Ẹjọ",ad:"Enyi"}},
+  {count:9,obj:"🐝",answer:9,choices:[7,8,9,10],word:{fr:"Neuf",en:"Nine",yo:"Ẹsàn",ad:"Asɔ"}},
+  {count:10,obj:"🐟",answer:10,choices:[8,9,10,11],word:{fr:"Dix",en:"Ten",yo:"Ẹ̀wá",ad:"Ewo"}},
+];
+const COLORS_DATA=[
+  {emoji:"🟥",fr:"Rouge",en:"Red",yo:"Pupa",ad:"Vu",opts:[0,1,2,3]},
+  {emoji:"🟦",fr:"Bleu",en:"Blue",yo:"Búlúù",ad:"Blu",opts:[1,0,4,5]},
+  {emoji:"🟩",fr:"Vert",en:"Green",yo:"Ewédú",ad:"Ɖeɖe",opts:[2,0,1,3]},
+  {emoji:"🟨",fr:"Jaune",en:"Yellow",yo:"Àárọ̀",ad:"Wiwi",opts:[3,2,0,4]},
+  {emoji:"🟧",fr:"Orange",en:"Orange",yo:"Ọ̀rọ̀jẹ̀",ad:"Orange",opts:[4,0,1,3]},
+  {emoji:"🟪",fr:"Violet",en:"Purple",yo:"Àràbà",ad:"Violet",opts:[5,1,0,2]},
+  {emoji:"⬛",fr:"Noir",en:"Black",yo:"Dúdú",ad:"Vivɔ",opts:[6,0,2,3]},
+  {emoji:"⬜",fr:"Blanc",en:"White",yo:"Funfun",ad:"Vivɔ sin",opts:[7,0,1,6]},
+];
+const ANIMALS_DATA=[
+  {emoji:"🐘",fr:"Éléphant",en:"Elephant",yo:"Erin",ad:"Zɔ",habitat:{fr:"Savane",en:"Savanna",yo:"Egan",ad:"Gletɔ"},opts:[0,1,2,3]},
+  {emoji:"🦁",fr:"Lion",en:"Lion",yo:"Kìnnìún",ad:"Nɔte",habitat:{fr:"Savane",en:"Savanna",yo:"Egan",ad:"Gletɔ"},opts:[1,0,4,5]},
+  {emoji:"🐔",fr:"Poule",en:"Chicken",yo:"Adìẹ",ad:"Kɔkɔ",habitat:{fr:"Ferme",en:"Farm",yo:"Oko",ad:"Agblome"},opts:[2,3,6,7]},
+  {emoji:"🐄",fr:"Vache",en:"Cow",yo:"Màlúù",ad:"Na",habitat:{fr:"Ferme",en:"Farm",yo:"Oko",ad:"Agblome"},opts:[3,2,6,7]},
+  {emoji:"🐬",fr:"Dauphin",en:"Dolphin",yo:"Ẹja ìṣúpọ̀",ad:"Tohɔ",habitat:{fr:"Mer",en:"Sea",yo:"Òkun",ad:"Ðaxo"},opts:[4,5,0,1]},
+  {emoji:"🌸",fr:"Papillon",en:"Butterfly",yo:"Labalábà",ad:"Akɔble",habitat:{fr:"Jardin",en:"Garden",yo:"Ọgbà",ad:"Agble"},opts:[5,8,9,4]},
+  {emoji:"🐸",fr:"Grenouille",en:"Frog",yo:"Opolo",ad:"Agble",habitat:{fr:"Rivière",en:"River",yo:"Odò",ad:"To"},opts:[6,7,4,5]},
+  {emoji:"🐐",fr:"Chèvre",en:"Goat",yo:"Ewúrẹ́",ad:"Gbevi",habitat:{fr:"Ferme",en:"Farm",yo:"Oko",ad:"Agblome"},opts:[7,3,2,6]},
+  {emoji:"🐝",fr:"Abeille",en:"Bee",yo:"Oyin",ad:"Hwevi",habitat:{fr:"Jardin",en:"Garden",yo:"Ọgbà",ad:"Agble"},opts:[8,5,9,4]},
+  {emoji:"🐊",fr:"Crocodile",en:"Crocodile",yo:"Onídán",ad:"Kpawu",habitat:{fr:"Rivière",en:"River",yo:"Odò",ad:"To"},opts:[9,6,4,5]},
+];
+const EMOTIONS_DATA=[
+  {emoji:"😊",fr:"Content",en:"Happy",yo:"Inú dídùn",ad:"Nyɔ lɔ",story:{fr:"Kofi reçoit un cadeau de Maman",en:"Kofi gets a gift from Mom",yo:"Kofi gbà ẹbùn lọwọ Ìyá",ad:"Kofi sɔ afɔklui Mama gɔ̃"},opts:[0,1,2,3]},
+  {emoji:"😢",fr:"Triste",en:"Sad",yo:"Ọgbẹ́n",ad:"Doxo",story:{fr:"Kofi a perdu son jouet préféré",en:"Kofi lost his favourite toy",yo:"Kofi pàdánù ìtura rẹ",ad:"Kofi sɔ ɖoɖo tɔn ɖe"},opts:[1,0,2,4]},
+  {emoji:"😠",fr:"En colère",en:"Angry",yo:"Ìbínú",ad:"Wezɔ",story:{fr:"Quelqu'un a pris le repas de Kofi",en:"Someone took Kofi's food",yo:"Ẹnikan mú oúnjẹ Kofi",ad:"Mɛɖe sɔ Kofi nu ɖe"},opts:[2,0,1,3]},
+  {emoji:"😱",fr:"Peur",en:"Scared",yo:"Ẹ̀rù",ad:"Egbé",story:{fr:"Kofi entend un bruit dans la nuit",en:"Kofi hears a sound at night",yo:"Kofi gbọ́ ohùn ní alẹ",ad:"Kofi sè vɔ zã mɛ"},opts:[3,1,0,4]},
+  {emoji:"😴",fr:"Fatigué",en:"Tired",yo:"Àárẹ̀",ad:"Sé",story:{fr:"Kofi a couru et joué toute la journée",en:"Kofi ran and played all day",yo:"Kofi sá àti ṣeré ní ọjọ́ náà",ad:"Kofi yi bo lɛ egbe bǐ"},opts:[4,0,1,2]},
+  {emoji:"😃",fr:"Excité",en:"Excited",yo:"Ìgbádùn",ad:"Ɖɔkui",story:{fr:"C'est la fête au village !",en:"There is a festival in the village!",yo:"Àjọyọ̀ wà ní abúlé!",ad:"Fɛte le ɖo agomɛ!"},opts:[5,0,1,3]},
+];
+const CONSONANTS=["B","D","F","G","J","K","L","M","N","P","R","S","T","V","Z"];
+const VOWELS=["A","E","I","O","U"];
+const SYLLAB_WORDS={
+  "M+A":{word:"MA",repeat:"MAMA",rmeaning:{fr:"Maman",en:"Mom",yo:"Ìyá",ad:"Mama"}},
+  "P+A":{word:"PA",repeat:"PAPA",rmeaning:{fr:"Papa",en:"Dad",yo:"Bàbá",ad:"Papa"}},
+  "T+A":{word:"TA",repeat:"TATA",rmeaning:{fr:"Papa (familier)",en:"Dad (fam.)",yo:"Bàbá",ad:"Tata"}},
+  "B+A":{word:"BA",repeat:"BABA",rmeaning:{fr:"Papa (Yoruba)",en:"Father",yo:"Bàbá",ad:"Baba"}},
+  "K+O":{word:"KO",repeat:"KOKO",rmeaning:{fr:"Bouillie",en:"Porridge",yo:"Koko",ad:"Koko"}},
+  "D+O":{word:"DO",repeat:"DODO",rmeaning:{fr:"Plantain frit",en:"Fried plantain",yo:"Dodo",ad:"Dodo"}},
+  "V+I":{word:"VI",repeat:"VIVI",rmeaning:{fr:"Enfant (Fon)",en:"Child",yo:"Ọmọ",ad:"Vǐ"}},
+};
+const SOCIAL_DATA=[
+  {emoji:"👨‍👩‍👧",label:{fr:"La famille",en:"Family",yo:"Ìdílé",ad:"Subɔsubɔ"},desc:{fr:"Papa, Maman, frère, sœur — la famille c'est sacré.",en:"Dad, Mom, brother, sister — family is sacred.",yo:"Bàbá, Ìyá, Àbúrò — ìdílé ń ṣe pàtàkì.",ad:"Papa, Mama, nɔvi — subɔsubɔ nyɔ lɔ."}},
+  {emoji:"🏫",label:{fr:"L'école",en:"School",yo:"Ilé ẹ̀kọ́",ad:"Lekɔle"},desc:{fr:"À l'école, j'apprends, j'écoute et je respecte la maîtresse.",en:"At school, I learn, listen and respect the teacher.",yo:"Ní ilé ẹ̀kọ́, mo kẹ́kọ̀ọ́, mo tẹ́tí.",ad:"Lekɔle mɛ, un kplɔ, un se."}},
+  {emoji:"🏠",label:{fr:"Le quartier",en:"The neighborhood",yo:"Àdúgbò",ad:"Xɔme"},desc:{fr:"Je dis bonjour aux voisins et je ne jette pas de déchets.",en:"I greet neighbors and don't litter.",yo:"Mo kí àwọn aládùúgbò.",ad:"Un kplɔ xɔtɔviwo bo ma hɛ fifi."}},
+  {emoji:"💧",label:{fr:"L'eau propre",en:"Clean water",yo:"Omi mímọ̀",ad:"Towe mimɔ"},desc:{fr:"Je bois de l'eau propre et je couvre le canari.",en:"I drink clean water and cover the water pot.",yo:"Mo mu omi mímọ̀, mo bo àgolo.",ad:"Un nu towe mimɔ bo xɔ ago."}},
+  {emoji:"🌳",label:{fr:"La nature",en:"Nature",yo:"Àyíká",ad:"Nutome"},desc:{fr:"Je ne coupe pas les arbres, je plante des fleurs.",en:"I don't cut trees, I plant flowers.",yo:"Mi ò ge igi, mo gbin ododo.",ad:"Na atĩ ma gbla, un hɔ blema."}},
+];
+const CONFETTI_COLORS=["#7E57C2","#F9A825","#E91E63","#43A047","#1E88E5","#FF9800"];
+const DC=["#2E7D32","#1565C0","#6A1B9A","#C62828","#E65100","#BF360C","#00695C","#AD1457","#F57F17","#1B5E20","#37474F","#4E342E"];
+let moduleProgress={};MODULES.forEach(m=>moduleProgress[m.id]=m.prog);
+let S={nav:"home",screen:"home",lang:"fr",module:null,qIdx:0,sel:null,score:0,startTime:null,elapsed:0,feedback:null,fbTO:null,timerIv:null,routineStep:0,bodyPart:null,syllC:"T",syllV:"A",countIdx:0,countSel:null,alphLetter:"A",activeDomain:"all",activeLangs:{fr:true,en:true,yo:true,ad:true}};
+function tl(o){if(!o)return"";return o[S.lang]||o.fr||"";}
+function mname(id){const m=MODULES.find(x=>x.id===id);return m?tl(m.name):id;}
+function tone(type){try{const ctx=new(window.AudioContext||window.webkitAudioContext)();const o=ctx.createOscillator(),g=ctx.createGain();o.connect(g);g.connect(ctx.destination);if(type==="correct"){[523,659,784].forEach((f,i)=>o.frequency.setValueAtTime(f,ctx.currentTime+i*.1));g.gain.setValueAtTime(.28,ctx.currentTime);g.gain.exponentialRampToValueAtTime(.001,ctx.currentTime+.55);o.start();o.stop(ctx.currentTime+.55);}else if(type==="wrong"){o.frequency.setValueAtTime(280,ctx.currentTime);o.frequency.setValueAtTime(200,ctx.currentTime+.15);g.gain.setValueAtTime(.22,ctx.currentTime);g.gain.exponentialRampToValueAtTime(.001,ctx.currentTime+.38);o.start();o.stop(ctx.currentTime+.38);}else if(type==="reward"){[523,587,659,784,880,1047].forEach((f,i)=>{const oo=ctx.createOscillator(),gg=ctx.createGain();oo.connect(gg);gg.connect(ctx.destination);oo.frequency.value=f;gg.gain.setValueAtTime(.2,ctx.currentTime+i*.09);gg.gain.exponentialRampToValueAtTime(.001,ctx.currentTime+i*.09+.35);oo.start(ctx.currentTime+i*.09);oo.stop(ctx.currentTime+i*.09+.38);});}else if(type==="tick"){o.frequency.value=660;g.gain.setValueAtTime(.15,ctx.currentTime);g.gain.exponentialRampToValueAtTime(.001,ctx.currentTime+.1);o.start();o.stop(ctx.currentTime+.1);}else{o.frequency.value=880;g.gain.setValueAtTime(.12,ctx.currentTime);g.gain.exponentialRampToValueAtTime(.001,ctx.currentTime+.08);o.start();o.stop(ctx.currentTime+.08);}}catch(e){}}
+function speak(text,lang){if(!text||!text.trim())return;const langMap={fr:"fr-FR",en:"en-US",yo:"fr-FR",ad:"fr-FR"};const bcp=langMap[lang]||"fr-FR";if("speechSynthesis" in window){const doSpeak=()=>{const voices=speechSynthesis.getVoices();const u=new SpeechSynthesisUtterance(text);const ev=voices.find(v=>v.lang===bcp);const pv=voices.find(v=>v.lang.startsWith(bcp.split("-")[0]));if(ev)u.voice=ev;else if(pv)u.voice=pv;u.lang=bcp;u.rate=lang==="yo"||lang==="ad"?0.65:0.78;u.pitch=1.1;speechSynthesis.cancel();setTimeout(()=>speechSynthesis.speak(u),100);};if(speechSynthesis.getVoices().length>0)doSpeak();else{speechSynthesis.addEventListener("voiceschanged",doSpeak,{once:true});speechSynthesis.getVoices();}}}
+function confetti(){const old=document.getElementById("cf");if(old)old.remove();const w=document.createElement("div");w.className="cfwrap";w.id="cf";document.body.appendChild(w);for(let i=0;i<46;i++){const p=document.createElement("div");p.className="cfp";p.style.cssText=`left:${Math.random()*100}%;background:${CONFETTI_COLORS[Math.floor(Math.random()*CONFETTI_COLORS.length)]};animation-delay:${Math.random()*.9}s;animation-duration:${1.4+Math.random()*1}s;border-radius:${Math.random()>.5?"50%":"2px"};`;w.appendChild(p);}setTimeout(()=>{const x=document.getElementById("cf");if(x)x.remove();},3200);}
+function startModule(id){tone("click");clearInterval(S.timerIv);const iv=setInterval(()=>{if(["game","count","colorgame","animalgame","emogame"].includes(S.screen)){S.elapsed=Math.floor((Date.now()-S.startTime)/1000);const el=document.getElementById("lt");if(el)el.textContent=fmt(S.elapsed);}},500);S={...S,module:id,qIdx:0,sel:null,score:0,elapsed:0,feedback:null,startTime:Date.now(),timerIv:iv};if(id==="numbers"){S.screen="count";S.countIdx=0;S.countSel=null;}else if(id==="colors")S.screen="colorgame";else if(id==="animals")S.screen="animalgame";else if(id==="emotions")S.screen="emogame";else if(id==="syllabes")S.screen="syllabes";else if(id==="alphabet")S.screen="alphabet";else if(id==="body")S.screen="body";else if(id==="routine_matin"){S.screen="routine_matin";S.routineStep=0;}else if(id==="routine_soir"){S.screen="routine_soir";S.routineStep=0;}else if(id==="manners")S.screen="manners";else if(id==="hygiene")S.screen="hygiene";else if(id==="social")S.screen="social";else S.screen="game";render();}
+function answerQ(idx,correct){if(S.sel!==null)return;tone(correct?"correct":"wrong");clearTimeout(S.fbTO);S.sel=idx;S.score=correct?S.score+1:S.score;S.feedback=correct?"correct":"wrong";render();S.fbTO=setTimeout(()=>{const qs=getQS();if(S.qIdx<qs.length-1){S.qIdx++;S.sel=null;S.feedback=null;render();}else{clearInterval(S.timerIv);tone("reward");confetti();S.screen="reward";S.sel=null;S.feedback=null;render();}},1100);}
+function getQS(){if(S.module==="colors")return COLORS_DATA;if(S.module==="animals")return ANIMALS_DATA;if(S.module==="emotions")return EMOTIONS_DATA;return[];}
+function fmt(s){return Math.floor(s/60)+":"+(s%60).toString().padStart(2,"0");}
+function topBar(){return`<div class="topbar"><div class="logo">🇧🇯 KidiLearn</div><div class="langgrp">${LANGS.map(l=>`<button class="lb ${S.lang===l?"on":""}" onclick="S.lang='${l}';render()">${LN[l]}</button>`).join("")}</div></div>`;}
+function avatarRow(){return`<div class="avrow"><div class="av">👦</div><div style="flex:1"><div class="avname">Bonjour, Kofi !</div><div class="avmeta">3 ans · Niv.2 · 47⭐</div><div class="xpbar"><div class="xpfill"></div></div><div class="xplbl">XP Niv.2 — 65/100</div></div></div>`;}
+function gameHeader(title,color){return`<div class="ghdr"><button class="gbk" onclick="clearInterval(S.timerIv);S.screen='home';S.nav='home';render()">←</button><div style="font-size:15px;font-weight:900;color:${color||'#4A148C'}">${title}</div><span id="lt" style="margin-left:auto;font-size:11px;color:#9E9E9E;font-weight:700">${fmt(S.elapsed)}</span></div>`;}
+function rewardScreen(){const qs=getQS();const hasQS=qs.length>0;const total=hasQS?qs.length:COUNT_LEVELS.length;const ds=hasQS?S.score:S.countIdx;const st=Math.min(3,Math.ceil(ds/Math.max(total,1)*3));return`<div class="rwrap"><div class="rbadge">🏆</div><div class="rtitle">Bravo Kofi !</div><div class="rsub">Tu as terminé : ${mname(S.module)} 🎉</div><div class="starsbig">${[0,1,2].map(i=>`<div class="sbig" style="background:${i<st?"#F9A825":"#E0E0E0"}"></div>`).join("")}</div><div class="statsrow"><div class="sbox" style="background:#E8F5E9"><div style="font-size:20px;font-weight:900;color:#2E7D32">${ds}/${total}</div><div style="font-size:10px;color:#388E3C;font-weight:700">Score</div></div><div class="sbox" style="background:#EDE7F6"><div style="font-size:20px;font-weight:900;color:#6A1B9A">+${ds*3}⭐</div><div style="font-size:10px;color:#7E57C2;font-weight:700">Étoiles</div></div><div class="sbox" style="background:#FFF9C4"><div style="font-size:20px;font-weight:900;color:#F57F17">${fmt(S.elapsed)}</div><div style="font-size:10px;color:#F9A825;font-weight:700">Durée</div></div></div><button class="nxtbtn" onclick="clearInterval(S.timerIv);moduleProgress['${S.module}']=Math.min(1,(moduleProgress['${S.module}']||0)+0.15);S.screen='home';S.nav='home';render()">Prochain jeu →</button><button class="replybtn" style="margin-top:8px" onclick="startModule('${S.module}')">Rejouer ↺</button></div>`;}
+function buildColorGame(){const qs=COLORS_DATA,q=qs[S.qIdx],opts=q.opts.map(i=>COLORS_DATA[i]),MC=MC_MAP["colors"];return`${gameHeader("🎨 Couleurs",MC.text)}<div class="progrow">${qs.map((_,i)=>`<div class="pdot" style="background:${i<S.qIdx?"#43A047":i===S.qIdx?"#F9A825":"#E0E0E0"}"></div>`).join("")}</div><div class="qcard" style="border-color:${MC.bd}"><div class="qimg" style="background:${MC.bg}"><span style="font-size:64px">${q.emoji}</span></div><div class="qtxt">C'est quelle couleur ?</div></div><div class="agrid">${opts.map((opt,idx)=>{const ic=opt.fr===q.fr;return`<div class="abtn${S.sel===idx?(ic?" correct":" wrong"):""}" onclick="answerQ(${idx},${ic})"><span class="aemoji">${opt.emoji}</span><div class="albl">${S.lang==="fr"?opt.fr:S.lang==="en"?opt.en:S.lang==="yo"?opt.yo:opt.ad}</div><span class="achk ${S.sel===idx&&ic?"show":""}">✅</span></div>`;}).join("")}</div>`;}
+function buildAnimalGame(){const qs=ANIMALS_DATA,q=qs[S.qIdx],opts=q.opts.map(i=>ANIMALS_DATA[i]),MC=MC_MAP["animals"];return`${gameHeader("🐾 Animaux",MC.text)}<div class="progrow">${qs.map((_,i)=>`<div class="pdot" style="background:${i<S.qIdx?"#43A047":i===S.qIdx?"#F9A825":"#E0E0E0"}"></div>`).join("")}</div><div class="qcard" style="border-color:${MC.bd}"><div class="qimg" style="background:${MC.bg}"><span style="font-size:64px">${q.emoji}</span></div><div class="qtxt">C'est quel animal ?</div><div class="qsub">🏠 ${tl(q.habitat)}</div></div><div class="agrid">${opts.map((opt,idx)=>{const ic=opt.fr===q.fr;return`<div class="abtn${S.sel===idx?(ic?" correct":" wrong"):""}" onclick="answerQ(${idx},${ic})"><span class="aemoji">${opt.emoji}</span><div class="albl">${S.lang==="fr"?opt.fr:S.lang==="en"?opt.en:S.lang==="yo"?opt.yo:opt.ad}</div><span class="achk ${S.sel===idx&&ic?"show":""}">✅</span></div>`;}).join("")}</div>`;}
+function buildEmoGame(){const qs=EMOTIONS_DATA,q=qs[S.qIdx],opts=q.opts.map(i=>EMOTIONS_DATA[i]),MC=MC_MAP["emotions"];return`${gameHeader("😊 Émotions",MC.text)}<div class="progrow">${qs.map((_,i)=>`<div class="pdot" style="background:${i<S.qIdx?"#43A047":i===S.qIdx?"#F9A825":"#E0E0E0"}"></div>`).join("")}</div><div class="qcard" style="border-color:${MC.bd}"><div style="background:#FFFDE7;border-radius:14px;padding:10px;margin-bottom:12px;font-size:12px;font-weight:700;color:#F57F17;text-align:center">📖 ${tl(q.story)}</div><div class="qimg" style="background:${MC.bg}"><span style="font-size:64px">${q.emoji}</span></div><div class="qtxt">Comment se sent Kofi ?</div></div><div class="agrid">${opts.map((opt,idx)=>{const ic=opt.fr===q.fr;return`<div class="abtn${S.sel===idx?(ic?" correct":" wrong"):""}" onclick="answerQ(${idx},${ic})"><span class="aemoji">${opt.emoji}</span><div class="albl">${S.lang==="fr"?opt.fr:S.lang==="en"?opt.en:S.lang==="yo"?opt.yo:opt.ad}</div><span class="achk ${S.sel===idx&&ic?"show":""}">✅</span></div>`;}).join("")}</div>`;}
+const MC_MAP={};MODULES.forEach(m=>MC_MAP[m.id]=m);
+function render(){
+  const sc=document.getElementById("screen"),nav=document.getElementById("navbar");let h="";
+  if(S.feedback){const old=document.getElementById("fbov");if(old)old.remove();const fb=document.createElement("div");fb.id="fbov";fb.className="fbov";fb.innerHTML=`<div class="fbpill" style="background:${S.feedback==="correct"?"#2E7D32":"#C62828"}">${S.feedback==="correct"?"Correct ! 🎉":"Essaie encore ! 💪"}</div>`;document.body.appendChild(fb);setTimeout(()=>{const x=document.getElementById("fbov");if(x)x.remove();},1000);}
+  nav.innerHTML=[{id:"home",icon:"🏠",lbl:{fr:"Accueil",en:"Home"}},{id:"games",icon:"🎮",lbl:{fr:"Jeux",en:"Games"}},{id:"parent",icon:"👨‍👩‍👧",lbl:{fr:"Parents",en:"Parents"}}].map(n=>`<button class="navbtn ${S.nav===n.id?"on":""}" onclick="S.nav='${n.id}';if('${n.id}'==='home'||'${n.id}'==='games'||'${n.id}'==='parent'){clearInterval(S.timerIv);S.screen='${n.id}';}render()"><span>${n.icon}</span><p>${tl(n.lbl)}</p></button>`).join("");
+  if(S.screen==="home"){
+    h+=topBar();h+=avatarRow();
+    h+=`<div class="badgerow"><div class="bchip">🔥 3 jours</div><div class="bchip">🌍 4 langues</div><div class="bchip">📚 47 mots</div><div class="bchip">🏅 Expert Animaux</div><div class="bchip">🇧🇯 Bénin</div></div>`;
+    h+=`<div class="daily" onclick="startModule('routine_matin')"><div class="daily-ic">⭐</div><div style="flex:1"><div style="font-size:13px;font-weight:900;color:#1B5E20">Défi du jour</div><div style="font-size:11px;color:#388E3C;font-weight:700">${tl({fr:"La routine du matin de Kofi",en:"Kofi's morning routine",yo:"Àṣà owurọ Kofi",ad:"Kofi zǎn vivo"})}</div></div><span style="font-size:18px">→</span></div>`;
+    h+=`<div class="slbl">Activités recommandées</div><div class="mgrid">`;
+    ["routine_matin","body","syllabes","manners","numbers","alphabet"].forEach(id=>{const m=MC_MAP[id];if(!m)return;h+=`<div class="mcard" style="background:${m.bg};border-color:${m.bd}" onclick="startModule('${id}')"><div class="mshine" style="background:${m.card}"></div><div class="micbox" style="background:${m.card}">${m.icon}</div><div class="mcname" style="color:${m.text}">${tl(m.name)}</div><div class="mcsub" style="color:${m.subc}">${tl(m.sub)}</div><div class="mcprog"><div class="mcprogfill" style="width:${Math.round((moduleProgress[id]||0)*100)}%"></div></div></div>`;});
+    h+=`</div>`;
+  }
+  else if(S.screen==="games"){
+    h+=topBar();h+=`<div class="slbl">Tous les modules</div><div class="dtabs">`;
+    DOMAINS.forEach(d=>{const on=S.activeDomain===d.id;h+=`<button class="dtab" style="background:${on?d.color:d.bg};color:${on?"#fff":d.color};border-color:${on?d.color:d.bd}" onclick="S.activeDomain='${d.id}';render()">${tl(d.label)}</button>`;});
+    h+=`</div><div class="mgrid">`;
+    MODULES.filter(m=>S.activeDomain==="all"||m.domain===S.activeDomain).forEach(m=>{h+=`<div class="mcard" style="background:${m.bg};border-color:${m.bd}" onclick="startModule('${m.id}')"><div class="mshine" style="background:${m.card}"></div><div class="micbox" style="background:${m.card}">${m.icon}</div><div class="mcname" style="color:${m.text}">${tl(m.name)}</div><div class="mcsub" style="color:${m.subc}">${tl(m.sub)}</div><div class="mcprog"><div class="mcprogfill" style="width:${Math.round((moduleProgress[m.id]||0)*100)}%"></div></div></div>`;});
+    h+=`</div>`;
+  }
+  else if(S.screen==="parent"){
+    h+=topBar();
+    h+=`<div class="pchild"><div style="width:46px;height:46px;border-radius:50%;background:linear-gradient(135deg,#9C27B0,#1565C0);display:flex;align-items:center;justify-content:center;font-size:24px;flex-shrink:0">👦</div><div style="flex:1"><div style="font-size:14px;font-weight:900;color:#4A148C">Kofi · 3 ans</div><div style="font-size:11px;color:#7E57C2;font-weight:700">Actif depuis 14 jours</div></div></div>`;
+    h+=`<div class="pstatgrid">${[["47","Mots appris"],["12","Sessions"],["85%","Réussite"],["3🔥","Série"]].map(([v,l])=>`<div class="pstatcard"><div style="font-size:24px;font-weight:900;color:#212121">${v}</div><div style="font-size:11px;color:#9E9E9E;margin-top:2px;font-weight:700">${l}</div></div>`).join("")}</div>`;
+    h+=`<div class="slbl">Progression par module</div><div class="domprog">`;
+    MODULES.forEach((m,i)=>{h+=`<div class="dprow"><div class="dplbl">${m.icon} ${tl(m.name)}</div><div class="dpbarbg"><div class="dpbar" style="width:${Math.round((moduleProgress[m.id]||0)*100)}%;background:${DC[i%DC.length]}"></div></div><div class="dppct">${Math.round((moduleProgress[m.id]||0)*100)}%</div></div>`;});
+    h+=`</div><div class="langbox"><div style="font-size:12px;font-weight:800;color:#4A148C">🌐 Langues actives</div><div class="langpills">${[["fr","🇫🇷 Français","#2E7D32","#E8F5E9"],["en","🇬🇧 English","#0D47A1","#E3F2FD"],["yo","🇳🇬 Yoruba","#E65100","#FFF3E0"],["ad","🇧🇯 Adja","#AD1457","#FCE4EC"]].map(([l,label,c,bg])=>`<button class="langpill" style="background:${S.activeLangs[l]?c:bg};color:${S.activeLangs[l]?"#fff":c};border-color:${c}" onclick="S.activeLangs['${l}']=!S.activeLangs['${l}'];render()">${label} ${S.activeLangs[l]?"✓":""}</button>`).join("")}</div></div>`;
+  }
+  else if(S.screen==="reward"){h+=rewardScreen();}
+  else if(S.screen==="routine_matin"||S.screen==="routine_soir"){
+    const steps=S.screen==="routine_matin"?ROUTINE_MATIN:ROUTINE_SOIR;
+    const ic=S.screen==="routine_matin"?"🌅":"🌙";
+    h+=gameHeader(`${ic} ${tl(S.screen==="routine_matin"?{fr:"Matin de Kofi",en:"Kofi's morning"}:{fr:"Soir de Kofi",en:"Kofi's evening"})}`,"#3E2A00");
+    h+=`<div style="background:#FFFDE7;border-radius:12px;padding:9px 12px;border:1.5px solid #FFE082;margin-bottom:12px;font-size:12px;font-weight:700;color:#F57F17">👆 Appuie sur chaque étape dans l'ordre !</div><div class="rsteps">`;
+    steps.forEach((step,i)=>{const done=i<S.routineStep,active=i===S.routineStep;h+=`<div class="rstep ${done?"done":active?"active":""}" onclick="if(${i}===${S.routineStep}){S.routineStep++;tone('tick');render();}"><div class="rstepnum">${done?"✓":i+1}</div><div class="rstepic">${step.icon}</div><div class="rsteptxt"><div class="rstepname">${tl(step.name)}</div><div class="rstepsub">${tl(step.sub)}</div></div><div class="rstepchk">✅</div></div>`;});
+    h+=`</div>`;
+    if(S.routineStep>=steps.length)h+=`<button class="rnxtbtn" onclick="tone('reward');confetti();S.screen='home';S.nav='home';render()">🏆 Bravo Kofi ! Retour →</button>`;
+  }
+  else if(S.screen==="manners"){
+    h+=gameHeader("👐 Bonnes manières","#1B5E20");
+    MANNERS.forEach(m=>{h+=`<div class="mancard"><div class="manic">${m.icon}</div><div><div style="font-size:13px;font-weight:900;color:#1B5E20;margin-bottom:3px">${tl(m.title)}</div><div style="font-size:12px;color:#2E7D32;font-weight:700;line-height:1.5">${tl(m.text)}</div></div></div>`;});
+    h+=`<button onclick="S.screen='home';S.nav='home';render()" style="width:100%;background:#7E57C2;color:#fff;border:none;border-radius:14px;padding:12px;font-size:14px;font-weight:900;cursor:pointer;margin-top:12px;font-family:'Nunito',sans-serif">← Retour</button>`;
+  }
+  else if(S.screen==="hygiene"){
+    h+=gameHeader("🦷 Hygiène","#003330");
+    [{icon:"🦷",t:{fr:"Brosse-toi les dents",en:"Brush your teeth"},s:{fr:"Matin et soir",en:"Morning and evening"}},{icon:"🚿",t:{fr:"Lave-toi le corps",en:"Wash your body"},s:{fr:"Tous les jours",en:"Every day"}},{icon:"👐",t:{fr:"Lave-toi les mains",en:"Wash your hands"},s:{fr:"Avant de manger",en:"Before eating"}},{icon:"👕",t:{fr:"Habits propres",en:"Clean clothes"},s:{fr:"Propres et secs",en:"Clean and dry"}},{icon:"🍎",t:{fr:"Mange sainement",en:"Eat healthily"},s:{fr:"Fruits, légumes, eau",en:"Fruits, veggies, water"}},{icon:"💤",t:{fr:"Dors suffisamment",en:"Sleep enough"},s:{fr:"8-10 heures",en:"8-10 hours"}}].forEach(it=>{h+=`<div class="mancard"><div class="manic" style="background:#E0F7FA">${it.icon}</div><div><div style="font-size:13px;font-weight:900;color:#003330;margin-bottom:3px">${tl(it.t)}</div><div style="font-size:12px;color:#00695C;font-weight:700">${tl(it.s)}</div></div></div>`;});
+    h+=`<button onclick="S.screen='home';S.nav='home';render()" style="width:100%;background:#7E57C2;color:#fff;border:none;border-radius:14px;padding:12px;font-size:14px;font-weight:900;cursor:pointer;margin-top:12px;font-family:'Nunito',sans-serif">← Retour</button>`;
+  }
+  else if(S.screen==="body"){
+    h+=gameHeader("👦 Mon corps","#0D47A1");
+    const parts=[{id:"head",label:{fr:"La tête",en:"Head",yo:"Orí",ad:"Ta"},icon:"🧠"},{id:"eye",label:{fr:"Les yeux",en:"Eyes",yo:"Ojú",ad:"Nunɔ"},icon:"👁️"},{id:"ear",label:{fr:"Les oreilles",en:"Ears",yo:"Etí",ad:"Toɖo"},icon:"👂"},{id:"nose",label:{fr:"Le nez",en:"Nose",yo:"Imú",ad:"Aŋu"},icon:"👃"},{id:"mouth",label:{fr:"La bouche",en:"Mouth",yo:"Ẹnu",ad:"Nu"},icon:"👄"},{id:"arm",label:{fr:"Le bras",en:"Arm",yo:"Apá",ad:"Asi"},icon:"💪"},{id:"hand",label:{fr:"La main",en:"Hand",yo:"Ọwọ́",ad:"Alɔ"},icon:"✋"},{id:"belly",label:{fr:"Le ventre",en:"Belly",yo:"Inú",ad:"Ayi"},icon:"🩹"},{id:"leg",label:{fr:"La jambe",en:"Leg",yo:"Ẹsẹ̀",ad:"Afɔ"},icon:"🦵"},{id:"foot",label:{fr:"Le pied",en:"Foot",yo:"Atẹlẹsẹ̀",ad:"Afɔgbe"},icon:"👟"}];
+    h+=`<div style="display:grid;grid-template-columns:repeat(3,1fr);gap:9px;margin-bottom:12px">`;
+    parts.forEach(p=>{const a=S.bodyPart===p.id;h+=`<div onclick="S.bodyPart='${p.id}';speak('${tl(p.label)}','${S.lang}');tone('tick');render()" style="background:${a?"#1565C0":"#E3F2FD"};border:2px solid ${a?"#1565C0":"#90CAF9"};border-radius:14px;padding:10px 6px;text-align:center;cursor:pointer"><div style="font-size:26px">${p.icon}</div><div style="font-size:11px;font-weight:900;color:${a?"#fff":"#0D47A1"};margin-top:4px">${tl(p.label)}</div></div>`;});
+    h+=`</div>`;
+    if(S.bodyPart){const p=parts.find(x=>x.id===S.bodyPart);if(p)h+=`<div style="background:#E3F2FD;border-radius:16px;padding:14px;border:2px solid #1E88E5;margin-bottom:12px;text-align:center"><div style="font-size:32px;margin-bottom:8px">${p.icon}</div><div style="font-size:20px;font-weight:900;color:#0D47A1;margin-bottom:10px">${tl(p.label)}</div><div style="display:flex;gap:6px;justify-content:center;flex-wrap:wrap">${["fr","en","yo","ad"].map(l=>`<span onclick="speak('${p.label[l]}','${l}')" style="cursor:pointer;background:#fff;border:1.5px solid #90CAF9;border-radius:9px;padding:4px 10px;font-size:11px;font-weight:700;color:#1565C0">${{fr:"🇫🇷",en:"🇬🇧",yo:"🇳🇬",ad:"🇧🇯"}[l]} ${p.label[l]}</span>`).join("")}</div><button onclick="speak('${tl(p.label)}','${S.lang}')" style="margin-top:10px;background:#1E88E5;color:#fff;border:none;border-radius:10px;padding:8px 18px;font-size:12px;font-weight:800;cursor:pointer;font-family:'Nunito',sans-serif">🔊 Écouter</button></div>`;}
+    h+=`<button onclick="S.screen='home';S.nav='home';render()" style="width:100%;background:#7E57C2;color:#fff;border:none;border-radius:14px;padding:12px;font-size:14px;font-weight:900;cursor:pointer;margin-top:12px;font-family:'Nunito',sans-serif">← Retour</button>`;
+  }
+  else if(S.screen==="alphabet"){
+    const al=ALPHABET.find(a=>a.letter===S.alphLetter)||ALPHABET[0];
+    h+=gameHeader("🔤 L'alphabet","#880E4F");
+    h+=`<div class="alphscene"><div class="alphgrid">${ALPHABET.map(a=>`<button class="alphbtn ${S.alphLetter===a.letter?"on":""}" onclick="S.alphLetter='${a.letter}';speak('${a.letter}','fr');tone('click');render()">${a.letter}</button>`).join("")}</div><div class="alphword"><div class="alphword-letter">${al.letter}</div><div class="alphword-img">${al.emoji}</div><div class="alphword-example">${tl(al.word)}</div><div class="alphword-langs"><span class="alphword-pill" style="background:#E8F5E9;color:#1B5E20">🇫🇷 ${al.word.fr}</span><span class="alphword-pill" style="background:#E3F2FD;color:#0D47A1">🇬🇧 ${al.word.en}</span><span class="alphword-pill" style="background:#FFF3E0;color:#E65100">🇳🇬 ${al.word.yo}</span><span class="alphword-pill" style="background:#FCE4EC;color:#AD1457">🇧🇯 ${al.word.ad}</span></div><div style="display:flex;gap:7px;justify-content:center;margin-top:12px;flex-wrap:wrap"><button style="padding:7px 14px;border-radius:12px;background:#E91E63;color:#fff;border:none;font-size:12px;font-weight:800;cursor:pointer;font-family:'Nunito',sans-serif" onclick="speak('${al.letter}','fr')">🔊 ${al.letter}</button><button style="padding:7px 14px;border-radius:12px;background:#1565C0;color:#fff;border:none;font-size:12px;font-weight:800;cursor:pointer;font-family:'Nunito',sans-serif" onclick="speak('${al.word.fr}','fr')">🇫🇷 ${al.word.fr}</button></div></div></div>`;
+    h+=`<button onclick="S.screen='home';S.nav='home';render()" style="width:100%;background:#7E57C2;color:#fff;border:none;border-radius:14px;padding:12px;font-size:14px;font-weight:900;cursor:pointer;margin-top:12px;font-family:'Nunito',sans-serif">← Retour</button>`;
+  }
+  else if(S.screen==="syllabes"){
+    const key=S.syllC+"+"+S.syllV,sy=SYLLAB_WORDS[key]||{word:S.syllC+S.syllV,repeat:S.syllC+S.syllV+S.syllC+S.syllV};
+    h+=gameHeader("📖 Syllabes","#4A148C");
+    h+=`<div class="slbl">1. Choisis une consonne</div><div class="consrow">${CONSONANTS.map(c=>`<button class="cbtn ${S.syllC===c?"on":""}" onclick="S.syllC='${c}';speak('${c}','fr');tone('click');render()">${c}</button>`).join("")}</div>`;
+    h+=`<div class="slbl">2. Choisis une voyelle</div><div class="vowrow">${VOWELS.map(v=>`<button class="vbtn ${S.syllV===v?"on":""}" onclick="S.syllV='${v}';speak('${v}','fr');tone('click');render()">${v}</button>`).join("")}</div>`;
+    h+=`<div class="sylarea"><div style="font-size:11px;font-weight:800;color:#6A1B9A;margin-bottom:12px;text-align:center">3. Assemble la syllabe</div><div class="sylrow"><div class="lbox cons">${S.syllC}</div><div class="opsign">+</div><div class="lbox vow">${S.syllV}</div><div class="opsign">=</div><div class="lbox res" onclick="speak('${sy.word}','fr')">${sy.word}</div></div><div class="sndbtnrow"><button class="schip" style="background:#EDE7F6;color:#4A148C" onclick="speak('${S.syllC}','fr')">🔊 ${S.syllC}</button><button class="schip" style="background:#FCE4EC;color:#AD1457" onclick="speak('${S.syllV}','fr')">🔊 ${S.syllV}</button><button class="schip" style="background:#7E57C2;color:#fff" onclick="speak('${sy.word}','fr')">🔊 ${sy.word}</button></div><div style="margin-top:14px;border-top:1.5px solid #EDE7F6;padding-top:12px"><div style="font-size:11px;font-weight:800;color:#6A1B9A;margin-bottom:12px;text-align:center">4. Répète pour faire un mot</div><div class="sylrow" style="justify-content:center"><div class="lbox cons" style="width:48px;height:54px;font-size:22px">${sy.word}</div><div class="opsign" style="font-size:18px">+</div><div class="lbox vow" style="width:48px;height:54px;font-size:22px">${sy.word}</div><div class="opsign" style="font-size:18px">=</div><div class="lbox res2" style="width:82px;font-size:20px" onclick="speak('${sy.repeat}','fr')">${sy.repeat}</div></div>${sy.rmeaning?`<div class="wordmeaning">💡 <span>${sy.repeat}</span> = ${tl(sy.rmeaning)}</div>`:""}<div class="sndbtnrow" style="margin-top:10px"><button class="schip" style="background:#4A148C;color:#fff;font-size:13px" onclick="speak('${sy.repeat}','fr')">🔊 « ${sy.repeat} »</button></div></div></div>`;
+    h+=`<button onclick="S.screen='home';S.nav='home';render()" style="width:100%;background:#7E57C2;color:#fff;border:none;border-radius:14px;padding:12px;font-size:14px;font-weight:900;cursor:pointer;margin-top:12px;font-family:'Nunito',sans-serif">← Retour</button>`;
+  }
+  else if(S.screen==="count"){
+    const lvl=COUNT_LEVELS[S.countIdx];
+    h+=gameHeader("🔢 Compter","#1A0035");
+    h+=`<div class="progrow">${COUNT_LEVELS.map((_,i)=>`<div class="pdot" style="background:${i<S.countIdx?"#43A047":i===S.countIdx?"#F9A825":"#E0E0E0"}"></div>`).join("")}</div>`;
+    h+=`<div class="countscene"><div style="font-size:12px;font-weight:800;color:#6A1B9A;margin-bottom:8px;text-align:center">Compte les objets !</div><div class="objrow">`;
+    for(let i=0;i<lvl.count;i++)h+=`<div class="obj lit">${lvl.obj}</div>`;
+    h+=`</div><div style="font-size:12px;font-weight:800;color:#9E9E9E;margin-bottom:8px;text-align:center">Combien y en a-t-il ?</div><div class="numchoices">`;
+    lvl.choices.forEach((num,idx)=>{const ic=num===lvl.answer;h+=`<button class="nchoice${S.countSel===idx?(ic?" correct":" wrong"):""}" onclick="if(S.countSel!==null)return;S.countSel=${idx};if(${ic}){tone('correct');speak('${tl(lvl.word)}','${S.lang}');setTimeout(()=>{if(${S.countIdx}<${COUNT_LEVELS.length-1}){S.countIdx++;S.countSel=null;}else{clearInterval(S.timerIv);tone('reward');confetti();S.screen='reward';S.score=S.countIdx+1;}render();},1000);}else{tone('wrong');setTimeout(()=>{S.countSel=null;render();},900);}render()">${num}</button>`;});
+    h+=`</div><div style="text-align:center;margin-top:10px;font-size:13px;font-weight:700;color:#9E9E9E">${S.countIdx+1} / ${COUNT_LEVELS.length}</div></div>`;
+  }
+  else if(S.screen==="colorgame")h+=buildColorGame();
+  else if(S.screen==="animalgame")h+=buildAnimalGame();
+  else if(S.screen==="emogame")h+=buildEmoGame();
+  else if(S.screen==="social"){
+    h+=gameHeader("👨‍👩‍👧 Ma famille & mon monde","#3E0F00");
+    SOCIAL_DATA.forEach(s=>{h+=`<div class="mancard" style="border-color:#FFAB91"><div class="manic" style="background:#FBE9E7">${s.emoji}</div><div><div style="font-size:13px;font-weight:900;color:#BF360C;margin-bottom:3px">${tl(s.label)}</div><div style="font-size:12px;color:#D84315;font-weight:700;line-height:1.5">${tl(s.desc)}</div></div></div>`;});
+    h+=`<button onclick="S.screen='home';S.nav='home';render()" style="width:100%;background:#7E57C2;color:#fff;border:none;border-radius:14px;padding:12px;font-size:14px;font-weight:900;cursor:pointer;margin-top:12px;font-family:'Nunito',sans-serif">← Retour</button>`;
+  }
+  sc.innerHTML=h;
+}
+render();
+</script>
+</body>
+</html>
