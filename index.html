@@ -476,8 +476,34 @@ function render(){
     h+=`<div class="slbl">Progression par module</div><div class="domprog">`;
     MODULES.forEach((m,i)=>{h+=`<div class="dprow"><div class="dplbl">${m.icon} ${tl(m.name)}</div><div class="dpbarbg"><div class="dpbar" style="width:${Math.round((moduleProgress[m.id]||0)*100)}%;background:${DC[i%DC.length]}"></div></div><div class="dppct">${Math.round((moduleProgress[m.id]||0)*100)}%</div></div>`;});
     h+=`</div><div class="langbox"><div style="font-size:12px;font-weight:800;color:#4A148C">🌐 Langues actives</div><div class="langpills">${[["fr","🇫🇷 Français","#2E7D32","#E8F5E9"],["en","🇬🇧 English","#0D47A1","#E3F2FD"],["yo","🇳🇬 Yoruba","#E65100","#FFF3E0"],["ad","🇧🇯 Adja","#AD1457","#FCE4EC"]].map(([l,label,c,bg])=>`<button class="langpill" style="background:${S.activeLangs[l]?c:bg};color:${S.activeLangs[l]?"#fff":c};border-color:${c}" onclick="S.activeLangs['${l}']=!S.activeLangs['${l}'];render()">${label} ${S.activeLangs[l]?"✓":""}</button>`).join("")}</div></div>`;
+    h+=`<button onclick="S.screen='audiodiag';render()" style="width:100%;background:#fff;color:#4A148C;border:2px solid #CE93D8;border-radius:14px;padding:12px;font-size:13px;font-weight:900;cursor:pointer;margin-top:13px;font-family:'Nunito',sans-serif">🔍 Diagnostic audio vocal</button>`;
   }
   else if(S.screen==="reward"){h+=rewardScreen();}
+  else if(S.screen==="audiodiag"){
+    h+=gameHeader("🔍 Diagnostic audio","#4A148C");
+    const supported="speechSynthesis" in window;
+    const voices=(_kdlVoices&&_kdlVoices.length)?_kdlVoices:(supported?speechSynthesis.getVoices():[]);
+    const frVoices=voices.filter(v=>v.lang.toLowerCase().startsWith("fr"));
+    h+=`<div class="qcard" style="border-color:#CE93D8;text-align:left;padding:16px">`;
+    h+=`<div style="font-size:13px;font-weight:900;color:#4A148C;margin-bottom:10px">État de la synthèse vocale</div>`;
+    h+=`<div style="font-size:12px;font-weight:700;color:${supported?"#2E7D32":"#C62828"};margin-bottom:6px">${supported?"✅":"❌"} API disponible : ${supported?"Oui":"Non"}</div>`;
+    h+=`<div style="font-size:12px;font-weight:700;color:${voices.length?"#2E7D32":"#C62828"};margin-bottom:6px">${voices.length?"✅":"❌"} Voix détectées : ${voices.length}</div>`;
+    h+=`<div style="font-size:12px;font-weight:700;color:${frVoices.length?"#2E7D32":"#C62828"};margin-bottom:10px">${frVoices.length?"✅":"❌"} Voix françaises : ${frVoices.length}</div>`;
+    if(voices.length>0){
+      h+=`<div style="max-height:160px;overflow-y:auto;background:#F3E5F5;border-radius:10px;padding:8px 10px;font-size:11px;color:#6A1B9A;line-height:1.7">`;
+      voices.forEach(v=>{const isFr=v.lang.toLowerCase().startsWith("fr");h+=`<div style="${isFr?"font-weight:900;color:#4A148C":""}">${isFr?"🇫🇷 ":""}${v.lang} — ${v.name}</div>`;});
+      h+=`</div>`;
+    }
+    h+=`</div>`;
+    h+=`<button class="nxtbtn" onclick="speak('Bonjour, ceci est un test audio en francais','fr')">🔊 Tester la voix française</button>`;
+    h+=`<button class="replybtn" style="margin-top:8px" onclick="_kdlLoadVoices();render()">↺ Recharger la liste des voix</button>`;
+    if(!frVoices.length){
+      h+=`<div style="background:#FFEBEE;border-radius:12px;padding:12px;margin-top:12px;font-size:12px;color:#C62828;font-weight:700;line-height:1.7">⚠️ Aucune voix française détectée.<br><br>Solution : Paramètres Android → Système → Langues et saisie → Synthèse vocale (Text-to-speech) → moteur <b>Speech Services by Google</b> → ⚙️ → Installer les données vocales → <b>Français</b>.<br><br>Si l'app "Speech Services by Google" n'existe pas, installez-la depuis le Play Store.</div>`;
+    }else if(voices.length>0){
+      h+=`<div style="background:#E8F5E9;border-radius:12px;padding:12px;margin-top:12px;font-size:12px;color:#2E7D32;font-weight:700;line-height:1.7">✅ Une voix française est installée ! Appuyez sur "Tester la voix française" ci-dessus. Si vous n'entendez rien, vérifiez le volume "Média" (pas la sonnerie) de votre téléphone.</div>`;
+    }
+    h+=`<button onclick="S.screen='parent';render()" style="width:100%;background:#7E57C2;color:#fff;border:none;border-radius:14px;padding:12px;font-size:14px;font-weight:900;cursor:pointer;margin-top:12px;font-family:'Nunito',sans-serif">← Retour</button>`;
+  }
   else if(S.screen==="routine_matin"||S.screen==="routine_soir"){
     const steps=S.screen==="routine_matin"?ROUTINE_MATIN:ROUTINE_SOIR;
     const ic=S.screen==="routine_matin"?"🌅":"🌙";
@@ -531,7 +557,7 @@ function render(){
   }
   else if(S.screen==="body"){
     h+=gameHeader("👦 Mon corps","#0D47A1");
-    const parts=[{id:"head",label:{fr:"La tête",en:"Head",yo:"Orí",ad:"Ta"},icon:"🧠"},{id:"eye",label:{fr:"Les yeux",en:"Eyes",yo:"Ojú",ad:"Nunɔ"},icon:"👁️"},{id:"ear",label:{fr:"Les oreilles",en:"Ears",yo:"Etí",ad:"Toɖo"},icon:"👂"},{id:"nose",label:{fr:"Le nez",en:"Nose",yo:"Imú",ad:"Aŋu"},icon:"👃"},{id:"mouth",label:{fr:"La bouche",en:"Mouth",yo:"Ẹnu",ad:"Nu"},icon:"👄"},{id:"arm",label:{fr:"Le bras",en:"Arm",yo:"Apá",ad:"Asi"},icon:"💪"},{id:"hand",label:{fr:"La main",en:"Hand",yo:"Ọwọ́",ad:"Alɔ"},icon:"✋"},{id:"belly",label:{fr:"Le ventre",en:"Belly",yo:"Inú",ad:"Ayi"},icon:"🩹"},{id:"leg",label:{fr:"La jambe",en:"Leg",yo:"Ẹsẹ̀",ad:"Afɔ"},icon:"🦵"},{id:"foot",label:{fr:"Le pied",en:"Foot",yo:"Atẹlẹsẹ̀",ad:"Afɔgbe"},icon:"👟"}];
+    const parts=[{id:"head",label:{fr:"La tête",en:"Head",yo:"Orí",ad:"Ta"},icon:"🗣️"},{id:"eye",label:{fr:"Les yeux",en:"Eyes",yo:"Ojú",ad:"Nunɔ"},icon:"👁️"},{id:"ear",label:{fr:"Les oreilles",en:"Ears",yo:"Etí",ad:"Toɖo"},icon:"👂"},{id:"nose",label:{fr:"Le nez",en:"Nose",yo:"Imú",ad:"Aŋu"},icon:"👃"},{id:"mouth",label:{fr:"La bouche",en:"Mouth",yo:"Ẹnu",ad:"Nu"},icon:"👄"},{id:"arm",label:{fr:"Le bras",en:"Arm",yo:"Apá",ad:"Asi"},icon:"💪"},{id:"hand",label:{fr:"La main",en:"Hand",yo:"Ọwọ́",ad:"Alɔ"},icon:"✋"},{id:"belly",label:{fr:"Le ventre",en:"Belly",yo:"Inú",ad:"Ayi"},icon:"🫃"},{id:"leg",label:{fr:"La jambe",en:"Leg",yo:"Ẹsẹ̀",ad:"Afɔ"},icon:"🦵"},{id:"foot",label:{fr:"Le pied",en:"Foot",yo:"Atẹlẹsẹ̀",ad:"Afɔgbe"},icon:"🦶"}];
     h+=`<div style="display:grid;grid-template-columns:repeat(3,1fr);gap:9px;margin-bottom:12px">`;
     parts.forEach(p=>{const a=S.bodyPart===p.id;h+=`<div onclick="S.bodyPart='${p.id}';speak('${tl(p.label)}','${S.lang}');tone('tick');render()" style="background:${a?"#1565C0":"#E3F2FD"};border:2px solid ${a?"#1565C0":"#90CAF9"};border-radius:14px;padding:10px 6px;text-align:center;cursor:pointer"><div style="font-size:26px">${p.icon}</div><div style="font-size:11px;font-weight:900;color:${a?"#fff":"#0D47A1"};margin-top:4px">${tl(p.label)}</div></div>`;});
     h+=`</div>`;
