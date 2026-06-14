@@ -388,20 +388,54 @@ const SOCIAL_DATA=[
   {emoji:"💧",label:{fr:"L'eau propre",en:"Clean water",yo:"Omi mímọ̀",ad:"Towe mimɔ"},desc:{fr:"Je bois de l'eau propre et je couvre le canari.",en:"I drink clean water and cover the water pot.",yo:"Mo mu omi mímọ̀, mo bo àgolo.",ad:"Un nu towe mimɔ bo xɔ ago."}},
   {emoji:"🌳",label:{fr:"La nature",en:"Nature",yo:"Àyíká",ad:"Nutome"},desc:{fr:"Je ne coupe pas les arbres, je plante des fleurs.",en:"I don't cut trees, I plant flowers.",yo:"Mi ò ge igi, mo gbin ododo.",ad:"Na atĩ ma gbla, un hɔ blema."}},
 ];
+const HYGIENE=[
+  {icon:"🦷",title:{fr:"Brosse-toi les dents",en:"Brush your teeth",yo:"Fọ ẹnu rẹ",ad:"Fufǔ ɖetíme"},sub:{fr:"Matin et soir, 2 minutes",en:"Morning and evening, 2 minutes",yo:"Owurọ àti alẹ, ìsẹjú 2",ad:"Zǎn kpo zã, dɔ 2"}},
+  {icon:"🚿",title:{fr:"Lave-toi le corps",en:"Wash your body",yo:"Wẹ ara rẹ",ad:"Huhun agbazawo"},sub:{fr:"Tous les jours, de la tête aux pieds",en:"Every day, head to toe",yo:"Gbogbo ọjọ́, orí sí ẹsẹ̀",ad:"Ɖo bǐ, ta yi afɔ"}},
+  {icon:"👐",title:{fr:"Lave-toi les mains",en:"Wash your hands",yo:"Fọ ọwọ́ rẹ",ad:"Huhun alɔme"},sub:{fr:"Avant de manger, après les toilettes",en:"Before eating, after toilet",yo:"Kí o tó jẹun, lẹ́yìn ìgbọ̀nsẹ̀",ad:"Akɔ nu ɖu, megbe kɔ yi"}},
+  {icon:"👕",title:{fr:"Porte des habits propres",en:"Wear clean clothes",yo:"Wọ aṣọ tí ó mọ́",ad:"Avo mimɔ me"},sub:{fr:"Propres, secs et adaptés",en:"Clean, dry and appropriate",yo:"Mọ́, gbígbẹ, tó bójú mu",ad:"Mimɔ, do, nyuie"}},
+  {icon:"🍎",title:{fr:"Mange sainement",en:"Eat healthily",yo:"Jẹ oúnjẹ tí ó dára",ad:"Nu nyuie ɖu"},sub:{fr:"Fruits, légumes, eau propre",en:"Fruits, vegetables, clean water",yo:"Èso, ewébẹ̀, omi mímọ̀",ad:"Nu, agble, towe mimɔ"}},
+  {icon:"💤",title:{fr:"Dors suffisamment",en:"Sleep enough",yo:"Sùn tó",ad:"Ɖo bɔbɔ"},sub:{fr:"8 à 10 heures pour les enfants",en:"8 to 10 hours for children",yo:"Wákàtí 8-10 fún àwọn ọmọ",ad:"Awɔ 8-10 vǐwo tɔn"}},
+];
 const CONFETTI_COLORS=["#7E57C2","#F9A825","#E91E63","#43A047","#1E88E5","#FF9800"];
 const DC=["#2E7D32","#1565C0","#6A1B9A","#C62828","#E65100","#BF360C","#00695C","#AD1457","#F57F17","#1B5E20","#37474F","#4E342E"];
 let moduleProgress={};MODULES.forEach(m=>moduleProgress[m.id]=m.prog);
-let S={nav:"home",screen:"home",lang:"fr",module:null,qIdx:0,sel:null,score:0,startTime:null,elapsed:0,feedback:null,fbTO:null,timerIv:null,routineStep:0,bodyPart:null,syllC:"T",syllV:"A",countIdx:0,countSel:null,alphLetter:"A",activeDomain:"all",activeLangs:{fr:true,en:true,yo:true,ad:true}};
+let S={nav:"home",screen:"home",lang:"fr",module:null,qIdx:0,sel:null,score:0,startTime:null,elapsed:0,feedback:null,fbTO:null,timerIv:null,routineStep:0,lastSpokenStep:-1,cardStep:0,lastSpokenCard:-1,bodyPart:null,syllC:"T",syllV:"A",countIdx:0,countSel:null,alphLetter:"A",activeDomain:"all",activeLangs:{fr:true,en:true,yo:true,ad:true}};
 function tl(o){if(!o)return"";return o[S.lang]||o.fr||"";}
 function mname(id){const m=MODULES.find(x=>x.id===id);return m?tl(m.name):id;}
 function tone(type){try{const ctx=new(window.AudioContext||window.webkitAudioContext)();const o=ctx.createOscillator(),g=ctx.createGain();o.connect(g);g.connect(ctx.destination);if(type==="correct"){[523,659,784].forEach((f,i)=>o.frequency.setValueAtTime(f,ctx.currentTime+i*.1));g.gain.setValueAtTime(.28,ctx.currentTime);g.gain.exponentialRampToValueAtTime(.001,ctx.currentTime+.55);o.start();o.stop(ctx.currentTime+.55);}else if(type==="wrong"){o.frequency.setValueAtTime(280,ctx.currentTime);o.frequency.setValueAtTime(200,ctx.currentTime+.15);g.gain.setValueAtTime(.22,ctx.currentTime);g.gain.exponentialRampToValueAtTime(.001,ctx.currentTime+.38);o.start();o.stop(ctx.currentTime+.38);}else if(type==="reward"){[523,587,659,784,880,1047].forEach((f,i)=>{const oo=ctx.createOscillator(),gg=ctx.createGain();oo.connect(gg);gg.connect(ctx.destination);oo.frequency.value=f;gg.gain.setValueAtTime(.2,ctx.currentTime+i*.09);gg.gain.exponentialRampToValueAtTime(.001,ctx.currentTime+i*.09+.35);oo.start(ctx.currentTime+i*.09);oo.stop(ctx.currentTime+i*.09+.38);});}else if(type==="tick"){o.frequency.value=660;g.gain.setValueAtTime(.15,ctx.currentTime);g.gain.exponentialRampToValueAtTime(.001,ctx.currentTime+.1);o.start();o.stop(ctx.currentTime+.1);}else{o.frequency.value=880;g.gain.setValueAtTime(.12,ctx.currentTime);g.gain.exponentialRampToValueAtTime(.001,ctx.currentTime+.08);o.start();o.stop(ctx.currentTime+.08);}}catch(e){}}
-function speak(text,lang){if(!text||!text.trim())return;const langMap={fr:"fr-FR",en:"en-US",yo:"fr-FR",ad:"fr-FR"};const bcp=langMap[lang]||"fr-FR";if("speechSynthesis" in window){const doSpeak=()=>{const voices=speechSynthesis.getVoices();const u=new SpeechSynthesisUtterance(text);const ev=voices.find(v=>v.lang===bcp);const pv=voices.find(v=>v.lang.startsWith(bcp.split("-")[0]));if(ev)u.voice=ev;else if(pv)u.voice=pv;u.lang=bcp;u.rate=lang==="yo"||lang==="ad"?0.65:0.78;u.pitch=1.1;speechSynthesis.cancel();setTimeout(()=>speechSynthesis.speak(u),100);};if(speechSynthesis.getVoices().length>0)doSpeak();else{speechSynthesis.addEventListener("voiceschanged",doSpeak,{once:true});speechSynthesis.getVoices();}}}
+// ═══ Cache des voix + anti-pause Chrome Android ═══
+let _kdlVoices=[];
+function _kdlLoadVoices(){_kdlVoices=speechSynthesis.getVoices();}
+if("speechSynthesis" in window){
+  _kdlLoadVoices();
+  speechSynthesis.onvoiceschanged=_kdlLoadVoices;
+  // Bug Chrome Android : speechSynthesis se met en pause après ~15s, on la relance
+  setInterval(()=>{if(speechSynthesis.speaking){speechSynthesis.pause();speechSynthesis.resume();}},4000);
+}
+function speak(text,lang){
+  if(!text||!text.trim())return;
+  if(!("speechSynthesis" in window))return;
+  const langMap={fr:"fr-FR",en:"en-US",yo:"fr-FR",ad:"fr-FR"};
+  const bcp=langMap[lang]||"fr-FR";
+  speechSynthesis.cancel();
+  const u=new SpeechSynthesisUtterance(text);
+  const voices=_kdlVoices.length?_kdlVoices:speechSynthesis.getVoices();
+  const ev=voices.find(v=>v.lang===bcp);
+  const pv=voices.find(v=>v.lang.startsWith(bcp.split("-")[0]));
+  if(ev)u.voice=ev;else if(pv)u.voice=pv;
+  u.lang=bcp;
+  u.rate=lang==="yo"||lang==="ad"?0.65:0.78;
+  u.pitch=1.1;
+  u.volume=1;
+  window._kdlUtterance=u; // évite le garbage collection (bug Chrome)
+  speechSynthesis.speak(u);
+}
 function confetti(){const old=document.getElementById("cf");if(old)old.remove();const w=document.createElement("div");w.className="cfwrap";w.id="cf";document.body.appendChild(w);for(let i=0;i<46;i++){const p=document.createElement("div");p.className="cfp";p.style.cssText=`left:${Math.random()*100}%;background:${CONFETTI_COLORS[Math.floor(Math.random()*CONFETTI_COLORS.length)]};animation-delay:${Math.random()*.9}s;animation-duration:${1.4+Math.random()*1}s;border-radius:${Math.random()>.5?"50%":"2px"};`;w.appendChild(p);}setTimeout(()=>{const x=document.getElementById("cf");if(x)x.remove();},3200);}
-function startModule(id){tone("click");clearInterval(S.timerIv);const iv=setInterval(()=>{if(["game","count","colorgame","animalgame","emogame"].includes(S.screen)){S.elapsed=Math.floor((Date.now()-S.startTime)/1000);const el=document.getElementById("lt");if(el)el.textContent=fmt(S.elapsed);}},500);S={...S,module:id,qIdx:0,sel:null,score:0,elapsed:0,feedback:null,startTime:Date.now(),timerIv:iv};if(id==="numbers"){S.screen="count";S.countIdx=0;S.countSel=null;}else if(id==="colors")S.screen="colorgame";else if(id==="animals")S.screen="animalgame";else if(id==="emotions")S.screen="emogame";else if(id==="syllabes")S.screen="syllabes";else if(id==="alphabet")S.screen="alphabet";else if(id==="body")S.screen="body";else if(id==="routine_matin"){S.screen="routine_matin";S.routineStep=0;}else if(id==="routine_soir"){S.screen="routine_soir";S.routineStep=0;}else if(id==="manners")S.screen="manners";else if(id==="hygiene")S.screen="hygiene";else if(id==="social")S.screen="social";else S.screen="game";render();}
+function startModule(id){tone("click");clearInterval(S.timerIv);const iv=setInterval(()=>{if(["game","count","colorgame","animalgame","emogame"].includes(S.screen)){S.elapsed=Math.floor((Date.now()-S.startTime)/1000);const el=document.getElementById("lt");if(el)el.textContent=fmt(S.elapsed);}},500);S={...S,module:id,qIdx:0,sel:null,score:0,elapsed:0,feedback:null,startTime:Date.now(),timerIv:iv};if(id==="numbers"){S.screen="count";S.countIdx=0;S.countSel=null;}else if(id==="colors")S.screen="colorgame";else if(id==="animals")S.screen="animalgame";else if(id==="emotions")S.screen="emogame";else if(id==="syllabes")S.screen="syllabes";else if(id==="alphabet")S.screen="alphabet";else if(id==="body")S.screen="body";else if(id==="routine_matin"){S.screen="routine_matin";S.routineStep=0;S.lastSpokenStep=-1;}else if(id==="routine_soir"){S.screen="routine_soir";S.routineStep=0;S.lastSpokenStep=-1;}else if(id==="manners"){S.screen="manners";S.cardStep=0;S.lastSpokenCard=-1;}else if(id==="hygiene"){S.screen="hygiene";S.cardStep=0;S.lastSpokenCard=-1;}else if(id==="social")S.screen="social";else S.screen="game";render();}
 function answerQ(idx,correct){if(S.sel!==null)return;tone(correct?"correct":"wrong");clearTimeout(S.fbTO);S.sel=idx;S.score=correct?S.score+1:S.score;S.feedback=correct?"correct":"wrong";render();S.fbTO=setTimeout(()=>{const qs=getQS();if(S.qIdx<qs.length-1){S.qIdx++;S.sel=null;S.feedback=null;render();}else{clearInterval(S.timerIv);tone("reward");confetti();S.screen="reward";S.sel=null;S.feedback=null;render();}},1100);}
 function getQS(){if(S.module==="colors")return COLORS_DATA;if(S.module==="animals")return ANIMALS_DATA;if(S.module==="emotions")return EMOTIONS_DATA;return[];}
 function fmt(s){return Math.floor(s/60)+":"+(s%60).toString().padStart(2,"0");}
-function topBar(){return`<div class="topbar"><div class="logo">🇧🇯 KidiLearn</div><div class="langgrp">${LANGS.map(l=>`<button class="lb ${S.lang===l?"on":""}" onclick="S.lang='${l}';render()">${LN[l]}</button>`).join("")}</div></div>`;}
+function topBar(){return`<div class="topbar"><div class="logo">🇧🇯 KidiLearn</div><div class="langgrp">${LANGS.map(l=>`<button class="lb ${S.lang===l?"on":""}" onclick="S.lang='${l}';S.lastSpokenStep=-1;S.lastSpokenCard=-1;render()">${LN[l]}</button>`).join("")}</div></div>`;}
 function avatarRow(){return`<div class="avrow"><div class="av">👦</div><div style="flex:1"><div class="avname">Bonjour, Kofi !</div><div class="avmeta">3 ans · Niv.2 · 47⭐</div><div class="xpbar"><div class="xpfill"></div></div><div class="xplbl">XP Niv.2 — 65/100</div></div></div>`;}
 function gameHeader(title,color){return`<div class="ghdr"><button class="gbk" onclick="clearInterval(S.timerIv);S.screen='home';S.nav='home';render()">←</button><div style="font-size:15px;font-weight:900;color:${color||'#4A148C'}">${title}</div><span id="lt" style="margin-left:auto;font-size:11px;color:#9E9E9E;font-weight:700">${fmt(S.elapsed)}</span></div>`;}
 function rewardScreen(){const qs=getQS();const hasQS=qs.length>0;const total=hasQS?qs.length:COUNT_LEVELS.length;const ds=hasQS?S.score:S.countIdx;const st=Math.min(3,Math.ceil(ds/Math.max(total,1)*3));return`<div class="rwrap"><div class="rbadge">🏆</div><div class="rtitle">Bravo Kofi !</div><div class="rsub">Tu as terminé : ${mname(S.module)} 🎉</div><div class="starsbig">${[0,1,2].map(i=>`<div class="sbig" style="background:${i<st?"#F9A825":"#E0E0E0"}"></div>`).join("")}</div><div class="statsrow"><div class="sbox" style="background:#E8F5E9"><div style="font-size:20px;font-weight:900;color:#2E7D32">${ds}/${total}</div><div style="font-size:10px;color:#388E3C;font-weight:700">Score</div></div><div class="sbox" style="background:#EDE7F6"><div style="font-size:20px;font-weight:900;color:#6A1B9A">+${ds*3}⭐</div><div style="font-size:10px;color:#7E57C2;font-weight:700">Étoiles</div></div><div class="sbox" style="background:#FFF9C4"><div style="font-size:20px;font-weight:900;color:#F57F17">${fmt(S.elapsed)}</div><div style="font-size:10px;color:#F9A825;font-weight:700">Durée</div></div></div><button class="nxtbtn" onclick="clearInterval(S.timerIv);moduleProgress['${S.module}']=Math.min(1,(moduleProgress['${S.module}']||0)+0.15);S.screen='home';S.nav='home';render()">Prochain jeu →</button><button class="replybtn" style="margin-top:8px" onclick="startModule('${S.module}')">Rejouer ↺</button></div>`;}
@@ -409,6 +443,13 @@ function buildColorGame(){const qs=COLORS_DATA,q=qs[S.qIdx],opts=q.opts.map(i=>C
 function buildAnimalGame(){const qs=ANIMALS_DATA,q=qs[S.qIdx],opts=q.opts.map(i=>ANIMALS_DATA[i]),MC=MC_MAP["animals"];return`${gameHeader("🐾 Animaux",MC.text)}<div class="progrow">${qs.map((_,i)=>`<div class="pdot" style="background:${i<S.qIdx?"#43A047":i===S.qIdx?"#F9A825":"#E0E0E0"}"></div>`).join("")}</div><div class="qcard" style="border-color:${MC.bd}"><div class="qimg" style="background:${MC.bg}"><span style="font-size:64px">${q.emoji}</span></div><div class="qtxt">C'est quel animal ?</div><div class="qsub">🏠 ${tl(q.habitat)}</div></div><div class="agrid">${opts.map((opt,idx)=>{const ic=opt.fr===q.fr;return`<div class="abtn${S.sel===idx?(ic?" correct":" wrong"):""}" onclick="answerQ(${idx},${ic})"><span class="aemoji">${opt.emoji}</span><div class="albl">${S.lang==="fr"?opt.fr:S.lang==="en"?opt.en:S.lang==="yo"?opt.yo:opt.ad}</div><span class="achk ${S.sel===idx&&ic?"show":""}">✅</span></div>`;}).join("")}</div>`;}
 function buildEmoGame(){const qs=EMOTIONS_DATA,q=qs[S.qIdx],opts=q.opts.map(i=>EMOTIONS_DATA[i]),MC=MC_MAP["emotions"];return`${gameHeader("😊 Émotions",MC.text)}<div class="progrow">${qs.map((_,i)=>`<div class="pdot" style="background:${i<S.qIdx?"#43A047":i===S.qIdx?"#F9A825":"#E0E0E0"}"></div>`).join("")}</div><div class="qcard" style="border-color:${MC.bd}"><div style="background:#FFFDE7;border-radius:14px;padding:10px;margin-bottom:12px;font-size:12px;font-weight:700;color:#F57F17;text-align:center">📖 ${tl(q.story)}</div><div class="qimg" style="background:${MC.bg}"><span style="font-size:64px">${q.emoji}</span></div><div class="qtxt">Comment se sent Kofi ?</div></div><div class="agrid">${opts.map((opt,idx)=>{const ic=opt.fr===q.fr;return`<div class="abtn${S.sel===idx?(ic?" correct":" wrong"):""}" onclick="answerQ(${idx},${ic})"><span class="aemoji">${opt.emoji}</span><div class="albl">${S.lang==="fr"?opt.fr:S.lang==="en"?opt.en:S.lang==="yo"?opt.yo:opt.ad}</div><span class="achk ${S.sel===idx&&ic?"show":""}">✅</span></div>`;}).join("")}</div>`;}
 const MC_MAP={};MODULES.forEach(m=>MC_MAP[m.id]=m);
+function speakCurrentCard(){
+  const data=S.screen==="manners"?MANNERS:HYGIENE;
+  const item=data[S.cardStep];
+  if(!item)return;
+  const sub=S.screen==="manners"?tl(item.text):tl(item.sub);
+  speak(tl(item.title)+". "+sub,S.lang);
+}
 function render(){
   const sc=document.getElementById("screen"),nav=document.getElementById("navbar");let h="";
   if(S.feedback){const old=document.getElementById("fbov");if(old)old.remove();const fb=document.createElement("div");fb.id="fbov";fb.className="fbov";fb.innerHTML=`<div class="fbpill" style="background:${S.feedback==="correct"?"#2E7D32":"#C62828"}">${S.feedback==="correct"?"Correct ! 🎉":"Essaie encore ! 💪"}</div>`;document.body.appendChild(fb);setTimeout(()=>{const x=document.getElementById("fbov");if(x)x.remove();},1000);}
@@ -442,19 +483,51 @@ function render(){
     const ic=S.screen==="routine_matin"?"🌅":"🌙";
     h+=gameHeader(`${ic} ${tl(S.screen==="routine_matin"?{fr:"Matin de Kofi",en:"Kofi's morning"}:{fr:"Soir de Kofi",en:"Kofi's evening"})}`,"#3E2A00");
     h+=`<div style="background:#FFFDE7;border-radius:12px;padding:9px 12px;border:1.5px solid #FFE082;margin-bottom:12px;font-size:12px;font-weight:700;color:#F57F17">👆 Appuie sur chaque étape dans l'ordre !</div><div class="rsteps">`;
-    steps.forEach((step,i)=>{const done=i<S.routineStep,active=i===S.routineStep;h+=`<div class="rstep ${done?"done":active?"active":""}" onclick="if(${i}===${S.routineStep}){S.routineStep++;tone('tick');render();}"><div class="rstepnum">${done?"✓":i+1}</div><div class="rstepic">${step.icon}</div><div class="rsteptxt"><div class="rstepname">${tl(step.name)}</div><div class="rstepsub">${tl(step.sub)}</div></div><div class="rstepchk">✅</div></div>`;});
+    steps.forEach((step,i)=>{const done=i<S.routineStep,active=i===S.routineStep;h+=`<div class="rstep ${done?"done":active?"active":""}" onclick="if(${i}===${S.routineStep}){S.routineStep++;S.lastSpokenStep=-1;tone('tick');render();}"><div class="rstepnum">${done?"✓":i+1}</div><div class="rstepic">${step.icon}</div><div class="rsteptxt"><div class="rstepname">${tl(step.name)}</div><div class="rstepsub">${tl(step.sub)}</div></div><div class="rstepchk">✅</div></div>`;});
     h+=`</div>`;
-    if(S.routineStep>=steps.length)h+=`<button class="rnxtbtn" onclick="tone('reward');confetti();S.screen='home';S.nav='home';render()">🏆 Bravo Kofi ! Retour →</button>`;
+    if(S.routineStep>=steps.length){
+      h+=`<button class="rnxtbtn" onclick="tone('reward');confetti();S.screen='home';S.nav='home';render()">🏆 Bravo Kofi ! Retour →</button>`;
+      if(S.lastSpokenStep!==steps.length){
+        S.lastSpokenStep=steps.length;
+        speak(tl({fr:"Bravo Kofi, tu as terminé !",en:"Well done Kofi, you finished!",yo:"Ó dára Kofi, o parí!",ad:"Kofi nyɔ, a wu enɛ!"}),S.lang);
+      }
+    }else if(S.lastSpokenStep!==S.routineStep){
+      S.lastSpokenStep=S.routineStep;
+      const cur=steps[S.routineStep];
+      speak(tl(cur.name)+". "+tl(cur.sub),S.lang);
+    }
   }
-  else if(S.screen==="manners"){
-    h+=gameHeader("👐 Bonnes manières","#1B5E20");
-    MANNERS.forEach(m=>{h+=`<div class="mancard"><div class="manic">${m.icon}</div><div><div style="font-size:13px;font-weight:900;color:#1B5E20;margin-bottom:3px">${tl(m.title)}</div><div style="font-size:12px;color:#2E7D32;font-weight:700;line-height:1.5">${tl(m.text)}</div></div></div>`;});
-    h+=`<button onclick="S.screen='home';S.nav='home';render()" style="width:100%;background:#7E57C2;color:#fff;border:none;border-radius:14px;padding:12px;font-size:14px;font-weight:900;cursor:pointer;margin-top:12px;font-family:'Nunito',sans-serif">← Retour</button>`;
-  }
-  else if(S.screen==="hygiene"){
-    h+=gameHeader("🦷 Hygiène","#003330");
-    [{icon:"🦷",t:{fr:"Brosse-toi les dents",en:"Brush your teeth"},s:{fr:"Matin et soir",en:"Morning and evening"}},{icon:"🚿",t:{fr:"Lave-toi le corps",en:"Wash your body"},s:{fr:"Tous les jours",en:"Every day"}},{icon:"👐",t:{fr:"Lave-toi les mains",en:"Wash your hands"},s:{fr:"Avant de manger",en:"Before eating"}},{icon:"👕",t:{fr:"Habits propres",en:"Clean clothes"},s:{fr:"Propres et secs",en:"Clean and dry"}},{icon:"🍎",t:{fr:"Mange sainement",en:"Eat healthily"},s:{fr:"Fruits, légumes, eau",en:"Fruits, veggies, water"}},{icon:"💤",t:{fr:"Dors suffisamment",en:"Sleep enough"},s:{fr:"8-10 heures",en:"8-10 hours"}}].forEach(it=>{h+=`<div class="mancard"><div class="manic" style="background:#E0F7FA">${it.icon}</div><div><div style="font-size:13px;font-weight:900;color:#003330;margin-bottom:3px">${tl(it.t)}</div><div style="font-size:12px;color:#00695C;font-weight:700">${tl(it.s)}</div></div></div>`;});
-    h+=`<button onclick="S.screen='home';S.nav='home';render()" style="width:100%;background:#7E57C2;color:#fff;border:none;border-radius:14px;padding:12px;font-size:14px;font-weight:900;cursor:pointer;margin-top:12px;font-family:'Nunito',sans-serif">← Retour</button>`;
+  else if(S.screen==="manners"||S.screen==="hygiene"){
+    const data=S.screen==="manners"?MANNERS:HYGIENE;
+    const hdrIcon=S.screen==="manners"?"👐":"🦷";
+    const hdrTitle=S.screen==="manners"?"Bonnes manières":"Hygiène";
+    const hdrColor=S.screen==="manners"?"#1B5E20":"#003330";
+    const cardBg=S.screen==="manners"?"#E8F5E9":"#E0F7FA";
+    const cardBorder=S.screen==="manners"?"#A5D6A7":"#80CBC4";
+    const titleColor=S.screen==="manners"?"#1B5E20":"#003330";
+    const textColor=S.screen==="manners"?"#2E7D32":"#00695C";
+    const item=data[S.cardStep];
+    const itemSub=S.screen==="manners"?tl(item.text):tl(item.sub);
+    h+=gameHeader(`${hdrIcon} ${hdrTitle}`,hdrColor);
+    h+=`<div class="progrow">${data.map((_,i)=>`<div class="pdot" style="background:${i<S.cardStep?"#43A047":i===S.cardStep?"#F9A825":"#E0E0E0"}"></div>`).join("")}</div>`;
+    h+=`<div class="qcard" style="border-color:${cardBorder}">
+      <div class="qimg" style="background:${cardBg};position:relative">
+        <span style="font-size:56px">${item.icon}</span>
+        <button class="sndbtn" onclick="speakCurrentCard()">🔊</button>
+      </div>
+      <div class="qtxt" style="color:${titleColor}">${tl(item.title)}</div>
+      <div style="font-size:13px;color:${textColor};font-weight:700;line-height:1.6;margin-top:8px">${itemSub}</div>
+    </div>`;
+    h+=`<div style="display:flex;gap:8px">`;
+    if(S.cardStep>0)h+=`<button class="replybtn" style="flex:1" onclick="S.cardStep--;S.lastSpokenCard=-1;render()">◀ Précédent</button>`;
+    if(S.cardStep<data.length-1)h+=`<button class="nxtbtn" style="flex:1;margin-bottom:0" onclick="S.cardStep++;S.lastSpokenCard=-1;render()">Suivant ▶</button>`;
+    else h+=`<button class="nxtbtn" style="flex:1;margin-bottom:0;background:#43A047" onclick="tone('reward');confetti();S.screen='home';S.nav='home';render()">🏆 Terminé !</button>`;
+    h+=`</div>`;
+    h+=`<button onclick="S.screen='home';S.nav='home';render()" style="width:100%;background:transparent;color:#9E9E9E;border:none;padding:10px;font-size:12px;font-weight:800;cursor:pointer;margin-top:6px;font-family:'Nunito',sans-serif">← Retour à l'accueil</button>`;
+    if(S.lastSpokenCard!==S.cardStep){
+      S.lastSpokenCard=S.cardStep;
+      speak(tl(item.title)+". "+itemSub,S.lang);
+    }
   }
   else if(S.screen==="body"){
     h+=gameHeader("👦 Mon corps","#0D47A1");
