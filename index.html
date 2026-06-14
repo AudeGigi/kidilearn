@@ -310,23 +310,29 @@ const ALPHABET=[
   {letter:"A",emoji:"🐊",word:{fr:"Alligator",en:"Alligator",yo:"Onídán",ad:"Kpawu"}},
   {letter:"B",emoji:"🍌",word:{fr:"Banane",en:"Banana",yo:"Ọ̀gẹ̀dẹ̀",ad:"Avitĩ"}},
   {letter:"C",emoji:"🐊",word:{fr:"Crocodile",en:"Crocodile",yo:"Onídán",ad:"Kpawu"}},
-  {letter:"D",emoji:"🦷",word:{fr:"Dent",en:"Tooth",yo:"Eyín",ad:"Ɖeti"}},
-  {letter:"E",emoji:"🌊",word:{fr:"Eau",en:"Water",yo:"Omi",ad:"Towe"}},
+  {letter:"D",emoji:"🦷",emojiEn:"🦆",word:{fr:"Dent",en:"Duck",yo:"Eyín",ad:"Ɖeti"}},
+  {letter:"E",emoji:"🌊",emojiEn:"🐘",word:{fr:"Eau",en:"Elephant",yo:"Omi",ad:"Towe"}},
   {letter:"F",emoji:"🔥",word:{fr:"Feu",en:"Fire",yo:"Iná",ad:"Dɛ"}},
-  {letter:"G",emoji:"🐸",word:{fr:"Grenouille",en:"Frog",yo:"Opolo",ad:"Agble"}},
-  {letter:"H",emoji:"🌿",word:{fr:"Herbe",en:"Grass",yo:"Koríko",ad:"Xɔ"}},
-  {letter:"I",emoji:"🌴",word:{fr:"Igname",en:"Yam",yo:"Ìṣu",ad:"Te"}},
-  {letter:"J",emoji:"🌺",word:{fr:"Jardin",en:"Garden",yo:"Ọgbà",ad:"Agble"}},
-  {letter:"K",emoji:"🐓",word:{fr:"Kpakpa",en:"Chicken",yo:"Adìẹ",ad:"Kɔkɔ"}},
+  {letter:"G",emoji:"🐸",emojiEn:"🐐",word:{fr:"Grenouille",en:"Goat",yo:"Opolo",ad:"Agble"}},
+  {letter:"H",emoji:"🌿",emojiEn:"🏠",word:{fr:"Herbe",en:"House",yo:"Koríko",ad:"Xɔ"}},
+  {letter:"I",emoji:"🌴",emojiEn:"🍦",word:{fr:"Igname",en:"Ice cream",yo:"Ìṣu",ad:"Te"}},
+  {letter:"J",emoji:"🌺",emojiEn:"🧃",word:{fr:"Jardin",en:"Juice",yo:"Ọgbà",ad:"Agble"}},
+  {letter:"K",emoji:"🐓",emojiEn:"🪁",word:{fr:"Kpakpa",en:"Kite",yo:"Adìẹ",ad:"Kɔkɔ"}},
   {letter:"L",emoji:"🦁",word:{fr:"Lion",en:"Lion",yo:"Kìnnìún",ad:"Nɔte"}},
   {letter:"M",emoji:"🍑",word:{fr:"Mangue",en:"Mango",yo:"Ìṣu",ad:"Mango"}},
-  {letter:"N",emoji:"🐟",word:{fr:"Nager",en:"Fish",yo:"Ẹja",ad:"Tɔ"}},
-  {letter:"O",emoji:"🥚",word:{fr:"Œuf",en:"Egg",yo:"Ẹyin",ad:"Agon"}},
+  {letter:"N",emoji:"🐟",emojiEn:"🪺",word:{fr:"Nager",en:"Nest",yo:"Ẹja",ad:"Tɔ"}},
+  {letter:"O",emoji:"🥚",emojiEn:"🍊",word:{fr:"Œuf",en:"Orange",yo:"Ẹyin",ad:"Agon"}},
   {letter:"P",emoji:"🍍",word:{fr:"Papaye",en:"Papaya",yo:"Ìbẹ̀pẹ̀",ad:"Kpakpa"}},
+  {letter:"Q",emoji:"🏘️",emojiEn:"👑",word:{fr:"Quartier",en:"Queen",yo:"Àdúgbò",ad:"Xɔme"}},
   {letter:"R",emoji:"🌧️",word:{fr:"Rivière",en:"River",yo:"Odò",ad:"To"}},
   {letter:"S",emoji:"☀️",word:{fr:"Soleil",en:"Sun",yo:"Òrùn",ad:"Agbaza"}},
   {letter:"T",emoji:"🌳",word:{fr:"Tamarinier",en:"Tree",yo:"Igi",ad:"Atĩ"}},
-  {letter:"V",emoji:"🐄",word:{fr:"Vache",en:"Cow",yo:"Màlúù",ad:"Na"}},
+  {letter:"U",emoji:"🌌",emojiEn:"☂️",word:{fr:"Univers",en:"Umbrella",yo:"Àgbáyé",ad:"Xexeame"}},
+  {letter:"V",emoji:"🐄",emojiEn:"🚐",word:{fr:"Vache",en:"Van",yo:"Màlúù",ad:"Na"}},
+  {letter:"W",emoji:"🚃",emojiEn:"🌊",word:{fr:"Wagon",en:"Water",yo:"Ọkọ̀ irin",ad:"Tlɛn"}},
+  {letter:"X",emoji:"🎶",word:{fr:"Xylophone",en:"Xylophone",yo:"Xylophone",ad:"Xylophone"}},
+  {letter:"Y",emoji:"🪀",word:{fr:"Yoyo",en:"Yoyo",yo:"Yoyo",ad:"Yoyo"}},
+  {letter:"Z",emoji:"🦓",word:{fr:"Zèbre",en:"Zebra",yo:"Sebra",ad:"Zebra"}},
 ];
 const COUNT_LEVELS=[
   {count:1,obj:"🍎",answer:1,choices:[1,2,3,4],word:{fr:"Un",en:"One",yo:"Ọ̀kan",ad:"Ɖokui"}},
@@ -566,8 +572,11 @@ function render(){
   }
   else if(S.screen==="alphabet"){
     const al=ALPHABET.find(a=>a.letter===S.alphLetter)||ALPHABET[0];
+    const alEmoji=(S.lang==="en"&&al.emojiEn)?al.emojiEn:al.emoji;
+    const flagMap={fr:"🇫🇷",en:"🇬🇧",yo:"🇳🇬",ad:"🇧🇯"};
+    const letterLang=S.lang==="en"?"en":"fr";
     h+=gameHeader("🔤 L'alphabet","#880E4F");
-    h+=`<div class="alphscene"><div class="alphgrid">${ALPHABET.map(a=>`<button class="alphbtn ${S.alphLetter===a.letter?"on":""}" onclick="S.alphLetter='${a.letter}';speak('${a.letter}','fr');tone('click');render()">${a.letter}</button>`).join("")}</div><div class="alphword"><div class="alphword-letter">${al.letter}</div><div class="alphword-img">${al.emoji}</div><div class="alphword-example">${tl(al.word)}</div><div class="alphword-langs"><span class="alphword-pill" style="background:#E8F5E9;color:#1B5E20">🇫🇷 ${al.word.fr}</span><span class="alphword-pill" style="background:#E3F2FD;color:#0D47A1">🇬🇧 ${al.word.en}</span><span class="alphword-pill" style="background:#FFF3E0;color:#E65100">🇳🇬 ${al.word.yo}</span><span class="alphword-pill" style="background:#FCE4EC;color:#AD1457">🇧🇯 ${al.word.ad}</span></div><div style="display:flex;gap:7px;justify-content:center;margin-top:12px;flex-wrap:wrap"><button style="padding:7px 14px;border-radius:12px;background:#E91E63;color:#fff;border:none;font-size:12px;font-weight:800;cursor:pointer;font-family:'Nunito',sans-serif" onclick="speak('${al.letter}','fr')">🔊 ${al.letter}</button><button style="padding:7px 14px;border-radius:12px;background:#1565C0;color:#fff;border:none;font-size:12px;font-weight:800;cursor:pointer;font-family:'Nunito',sans-serif" onclick="speak('${al.word.fr}','fr')">🇫🇷 ${al.word.fr}</button></div></div></div>`;
+    h+=`<div class="alphscene"><div class="alphgrid">${ALPHABET.map(a=>`<button class="alphbtn ${S.alphLetter===a.letter?"on":""}" onclick="S.alphLetter='${a.letter}';speak('${a.letter}','${letterLang}');tone('click');render()">${a.letter}</button>`).join("")}</div><div class="alphword"><div class="alphword-letter">${al.letter}</div><div class="alphword-img">${alEmoji}</div><div class="alphword-example">${tl(al.word)}</div><div class="alphword-langs"><span class="alphword-pill" style="background:#E8F5E9;color:#1B5E20">🇫🇷 ${al.word.fr}</span><span class="alphword-pill" style="background:#E3F2FD;color:#0D47A1">🇬🇧 ${al.word.en}</span><span class="alphword-pill" style="background:#FFF3E0;color:#E65100">🇳🇬 ${al.word.yo}</span><span class="alphword-pill" style="background:#FCE4EC;color:#AD1457">🇧🇯 ${al.word.ad}</span></div><div style="display:flex;gap:7px;justify-content:center;margin-top:12px;flex-wrap:wrap"><button style="padding:7px 14px;border-radius:12px;background:#E91E63;color:#fff;border:none;font-size:12px;font-weight:800;cursor:pointer;font-family:'Nunito',sans-serif" onclick="speak('${al.letter}','${letterLang}')">🔊 ${al.letter}</button><button style="padding:7px 14px;border-radius:12px;background:#1565C0;color:#fff;border:none;font-size:12px;font-weight:800;cursor:pointer;font-family:'Nunito',sans-serif" onclick="speak('${tl(al.word)}','${S.lang}')">${flagMap[S.lang]} ${tl(al.word)}</button></div></div></div>`;
     h+=`<button onclick="S.screen='home';S.nav='home';render()" style="width:100%;background:#7E57C2;color:#fff;border:none;border-radius:14px;padding:12px;font-size:14px;font-weight:900;cursor:pointer;margin-top:12px;font-family:'Nunito',sans-serif">← Retour</button>`;
   }
   else if(S.screen==="syllabes"){
