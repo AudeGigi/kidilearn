@@ -425,7 +425,7 @@ const HYGIENE=[
   {icon:"💤",title:{fr:"Dors suffisamment",en:"Sleep enough",yo:"Sùn tó",ad:"Ɖo bɔbɔ"},sub:{fr:"8 à 10 heures pour les enfants",en:"8 to 10 hours for children",yo:"Wákàtí 8-10 fún àwọn ọmọ",ad:"Awɔ 8-10 vǐwo tɔn"}},
 ];
 const TALLY_LEVELS=[{count:1,choices:[1,2,3,4],answer:1,word:{fr:"un",en:"one",yo:"ọ̀kan",ad:"ɖokui"}},{count:2,choices:[1,2,3,5],answer:2,word:{fr:"deux",en:"two",yo:"èjì",ad:"eve"}},{count:3,choices:[2,3,4,5],answer:3,word:{fr:"trois",en:"three",yo:"ẹ̀ta",ad:"etɔ̃"}},{count:4,choices:[3,4,5,6],answer:4,word:{fr:"quatre",en:"four",yo:"ẹ̀rin",ad:"enɛ"}},{count:5,choices:[3,4,5,6],answer:5,word:{fr:"cinq",en:"five",yo:"àrún",ad:"atɔ̃"}},{count:6,choices:[5,6,7,8],answer:6,word:{fr:"six",en:"six",yo:"ẹ̀fà",ad:"ade"}},{count:7,choices:[5,6,7,8],answer:7,word:{fr:"sept",en:"seven",yo:"èje",ad:"adre"}},{count:8,choices:[6,7,8,9],answer:8,word:{fr:"huit",en:"eight",yo:"ẹjọ",ad:"enyi"}},{count:9,choices:[7,8,9,10],answer:9,word:{fr:"neuf",en:"nine",yo:"ẹsàn",ad:"asɔn"}},{count:10,choices:[7,8,9,10],answer:10,word:{fr:"dix",en:"ten",yo:"ẹ̀wá",ad:"wǒ"}}];
-function tallyMark(n,sz){sz=sz||1;const gs=Math.ceil(n/5);let s=`<svg viewBox="0 0 ${gs*26*sz} ${28*sz}" width="${gs*26*sz}" height="${28*sz}" style="display:inline-block;vertical-align:middle">`;for(let i=0;i<n;i++){const g=Math.floor(i/5),p=i%5,x=g*26*sz;if(p<4){s+=`<line x1="${x+(p+1)*5*sz}" y1="${2*sz}" x2="${x+(p+1)*5*sz}" y2="${26*sz}" stroke="#FFFFFF" stroke-width="${2.5*sz}" stroke-linecap="round"/>`;}else{s+=`<line x1="${x+2*sz}" y1="${26*sz}" x2="${x+24*sz}" y2="${2*sz}" stroke="#FFD54F" stroke-width="${2.5*sz}" stroke-linecap="round"/>`;}}s+=`</svg>`;return s;}
+function tallyMark(n,sz,c1,c2){sz=sz||1;c1=c1||"#FFFFFF";c2=c2||"#FFD54F";const gs=Math.ceil(n/5);let s=`<svg viewBox="0 0 ${gs*26*sz} ${28*sz}" width="${gs*26*sz}" height="${28*sz}" style="display:inline-block;vertical-align:middle">`;for(let i=0;i<n;i++){const g=Math.floor(i/5),p=i%5,x=g*26*sz;if(p<4){s+=`<line x1="${x+(p+1)*5*sz}" y1="${2*sz}" x2="${x+(p+1)*5*sz}" y2="${26*sz}" stroke="${c1}" stroke-width="${2.5*sz}" stroke-linecap="round"/>`;}else{s+=`<line x1="${x+2*sz}" y1="${26*sz}" x2="${x+24*sz}" y2="${2*sz}" stroke="${c2}" stroke-width="${2.5*sz}" stroke-linecap="round"/>`;}}s+=`</svg>`;return s;}
 const COMPARE_DATA=[{type:"obj",emoji:"🍎",leftN:2,rightN:4},{type:"obj",emoji:"⭐",leftN:5,rightN:3},{type:"obj",emoji:"🐟",leftN:1,rightN:4},{type:"obj",emoji:"🌸",leftN:6,rightN:3},{type:"num",leftN:3,rightN:7},{type:"num",leftN:8,rightN:2},{type:"num",leftN:4,rightN:4},{type:"num",leftN:6,rightN:9},{type:"tallynum",leftN:3,rightN:5},{type:"tallynum",leftN:7,rightN:4},{type:"tallynum",leftN:2,rightN:2},{type:"tallynum",leftN:8,rightN:6}];
 const CMP_WORD={lt:{fr:"plus petit",en:"smaller",yo:"kéré jù",ad:"didi hú"},gt:{fr:"plus grand",en:"bigger",yo:"tóbi jù",ad:"gã hú"},eq:{fr:"égal",en:"equal",yo:"dọ́gba",ad:"sɔgbe"}};
 const CONFETTI_COLORS=["#7E57C2","#F9A825","#E91E63","#43A047","#1E88E5","#FF9800"];
@@ -541,7 +541,7 @@ function render(){
         const ic=num===lvl.answer;
         h+=`<button class="tallychoice${S.tallySel===idx?(ic?" correct":" wrong"):""}" onclick="if(S.tallySel!==null)return;S.tallySel=${idx};if(${ic}){tone('correct');speak('${tl(lvl.word)}','${S.lang}');setTimeout(()=>{if(${S.tallyIdx}<${TALLY_LEVELS.length-1}){S.tallyIdx++;S.tallySel=null;S.tallyPhase='learn';render();}else{clearInterval(S.timerIv);tone('reward');confetti();S.screen='reward';S.score=S.tallyIdx+1;render();}},1000);}else{tone('wrong');setTimeout(()=>{S.tallySel=null;render();},900);}render()">`;
         h+=`<div style="font-size:28px;font-weight:900;color:#3E2723">${num}</div>`;
-        h+=`<div style="font-size:11px;color:#3949AB;font-weight:700;margin-top:4px">${tallyMark(num,.8)}</div>`;
+        h+=`<div style="font-size:11px;color:#3949AB;font-weight:700;margin-top:4px">${tallyMark(num,.8,"#1A237E","#E65100")}</div>`;
         h+=`</button>`;
       });
       h+=`</div>`;
@@ -566,7 +566,7 @@ function render(){
     } else if(q.type==="num"){
       h+=`<div style="font-size:54px;font-weight:900;color:#212121;line-height:1">${q.leftN}</div>`;
     } else {
-      h+=`<div style="transform:scale(${q.leftN>5?0.85:1})">${tallyMark(q.leftN,1.2)}</div>`;
+      h+=`<div style="transform:scale(${q.leftN>5?0.85:1})">${tallyMark(q.leftN,1.2,"#1A237E","#E65100")}</div>`;
     }
     h+=`<div style="font-size:20px;font-weight:900;color:#9E9E9E;margin-top:6px">${q.leftN}</div>`;
     h+=`</div>`;
@@ -581,7 +581,7 @@ function render(){
     } else if(q.type==="num"){
       h+=`<div style="font-size:54px;font-weight:900;color:#212121;line-height:1">${q.rightN}</div>`;
     } else {
-      h+=`<div style="transform:scale(${q.rightN>5?0.85:1})">${tallyMark(q.rightN,1.2)}</div>`;
+      h+=`<div style="transform:scale(${q.rightN>5?0.85:1})">${tallyMark(q.rightN,1.2,"#1A237E","#E65100")}</div>`;
     }
     h+=`<div style="font-size:20px;font-weight:900;color:#9E9E9E;margin-top:6px">${q.rightN}</div>`;
     h+=`</div>`;
